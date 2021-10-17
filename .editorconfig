@@ -1,0 +1,15 @@
+[*.js]
+indent_style = space
+tab_width = 4
+
+[*.svelte]
+indent_style = space
+tab_width = 4
+
+[*.xml]
+indent_style = space
+tab_width = 2
+
+[*.html]
+indent_style = space
+tab_width = 4

@@ -1,0 +1,34 @@
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <!-- Here is the magic: set indent to format the output -->
+  <xsl:output omit-xml-declaration="yes" indent="yes"/>
+  <xsl:template match="/">
+    <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"> 
+      <DrawingBrush>
+        <!-- Get id of resource -->
+        <xsl:attribute name="x:Key">
+          <xsl:value-of select="svg/node()/@id"/>
+        </xsl:attribute>
+        <xsl:attribute name="Stretch">None</xsl:attribute>
+        <DrawingBrush.Drawing>
+          <DrawingGroup>
+            <DrawingGroup.Children>
+              <!-- Looping through all shapes -->
+              <xsl:for-each select="//path">
+                <GeometryDrawing>
+                  <!-- Get geometry -->
+                  <xsl:attribute name="Geometry">
+                    <xsl:value-of select="@d"/>
+                  </xsl:attribute>
+                  <!-- Get color -->
+                  <xsl:attribute name="Brush">
+                    <xsl:value-of select="@fill"/>
+                  </xsl:attribute>
+                </GeometryDrawing>
+              </xsl:for-each>
+            </DrawingGroup.Children>
+          </DrawingGroup>
+        </DrawingBrush.Drawing>
+      </DrawingBrush>
+    </ResourceDictionary>
+  </xsl:template>
+</xsl:stylesheet>
