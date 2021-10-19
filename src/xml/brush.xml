@@ -1,6 +1,20 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <!-- Here is the magic: set indent to format the output -->
   <xsl:output omit-xml-declaration="yes" indent="yes"/>
+  <!-- Hexadecimal color codes for transparency -->
+  <xsl:variable name="hexTransparency" select="'000305080A0D0F1214171A1C1F212426292B2E303336383B3D404245474A4D4F525457595C5E616366696B6E707375787A7D808285878A8C8F919496999C9EA1A3A6A8ABADB0B3B5B8BABDBFC2C4C7C9CCCFD1D4D6D9DBDEE0E3E6E8EBEDF0F2F5F7FAFCFF'"/>
+  <!-- Color Names -->
+  <xsl:template name="NameToHex">
+    <xsl:param name="color" />
+    <xsl:choose>
+      <xsl:when test="$color = 'black'">000000</xsl:when>
+      <xsl:when test="$color = 'white'">FFFFFF</xsl:when>
+      <xsl:when test="$color = 'red'">FF0000</xsl:when>
+      <xsl:when test="$color = 'lime'">00FF00</xsl:when>
+      <xsl:when test="$color = 'blue'">0000FF</xsl:when>
+      <xsl:otherwise>FFFFFF</xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
   <xsl:template match="/">
     <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"> 
       <DrawingBrush>
@@ -19,9 +33,24 @@
                   <xsl:attribute name="Geometry">
                     <xsl:value-of select="@d"/>
                   </xsl:attribute>
-                  <!-- Get color -->
+                  <!-- Сolouring -->
                   <xsl:attribute name="Brush">
-                    <xsl:value-of select="@fill"/>
+                    <xsl:text>#</xsl:text>
+                    <!-- Get transparency -->
+                    <xsl:if test="@fill-opacity">
+                      <xsl:value-of select="substring($hexTransparency, @fill-opacity*200+1, 2)"/>
+                    </xsl:if>
+                    <!-- Get color -->
+                    <xsl:choose>
+                      <xsl:when test="starts-with(@fill, '#')">
+                        <xsl:value-of select="substring(@fill, 2)"/>
+                      </xsl:when>
+                      <xsl:otherwise>
+                        <xsl:call-template name="NameToHex">
+                            <xsl:with-param name="color"><xsl:value-of select="@fill"/></xsl:with-param>
+                        </xsl:call-template>
+                      </xsl:otherwise>
+                    </xsl:choose>
                   </xsl:attribute>
                 </GeometryDrawing>
               </xsl:for-each>
