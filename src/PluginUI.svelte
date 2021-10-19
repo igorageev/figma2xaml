@@ -67,7 +67,9 @@
     function showСode() {
         if (newSource != '') {
             sourceHolder = newSource;
-        } else {
+        }
+        
+        if (sourceHolder == '') {
             return;
         }
 
