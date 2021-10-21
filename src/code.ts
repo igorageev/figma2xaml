@@ -14,10 +14,15 @@ figma.on('selectionchange', () => {
             svgOutlineText: false,
             svgIdAttribute: true
         }).then(
-            res => figma.ui.postMessage(String.fromCharCode.apply(null, res))
+            res => {
+                figma.ui.postMessage({
+                    svg: String.fromCharCode.apply(null, res),
+                    id: node.name
+                })
+            }
         )
         
     } else {
-        figma.ui.postMessage('');
+        figma.ui.postMessage({svg: '', id: ''});
     }
 });

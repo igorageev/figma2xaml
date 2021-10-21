@@ -32,9 +32,10 @@
     ];
 
     var newSource = '',
+        nameSelected = '',
+        nameCurrent = '',
         sourceHolder = '',
         xsltRule = new XMLSerializer().serializeToString(transform2group),
-        textContent = '',
         resultView = '',
         disabled = true,
         resultHolder,
@@ -59,7 +60,11 @@
     // Handler for incoming messages from Figma
     onmessage = (event) => {
         let received = event.data.pluginMessage;
-        received = received.replace('xmlns="http://www.w3.org/2000/svg"', "");
+        if (received.id != '') {
+            nameSelected = received.id;
+        }
+        received = received.svg.replace('xmlns="http://www.w3.org/2000/svg"', "");
+        // alert(received);
         newSource = received;
     };
 
@@ -101,9 +106,11 @@
      * Update and show new code
      */
     function getCode() {
+        
         if (newSource != '') {
             sourceHolder = newSource;
             isEmpty = false;
+            nameCurrent = 'of ' + nameSelected;
         } else {
             isEmpty = true;
             return;
@@ -131,7 +138,7 @@
     }
 
     /**
-     * Alternate show code
+     * Displaying the source bypassing the menu
      */
     function showSource() {
         displayedСode.value = 'source';
@@ -149,7 +156,7 @@
 <div id="wrapper" class="wrapper p-xxsmall hide">
 
     <!-- Setup controls -->
-    <Label>Code</Label>
+    <Label>Code <span class="name">{nameCurrent}</span></Label>
     <div class="flex row justify-content-between">
         <div class="flex-grow">
             <SelectMenu
@@ -241,6 +248,12 @@
     }
     .message p {
         margin: 4px;
+    }
+    .name {
+        padding-left: 4px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
     }
 
 </style>
