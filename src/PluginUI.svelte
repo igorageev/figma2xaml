@@ -4,11 +4,12 @@
     import { GlobalCSS } from 'figma-plugin-ds-svelte';
     import { onMount } from 'svelte';
     import 'highlight.js/styles/github.css';
+    import SvgName from './images.svg';
 
     // import xslt
-    import transform2group from './xml/group.xml';
-    import transform2brush from './xml/brush.xml';
-    import transform2image from './xml/image.xml';
+    import transform2group from './xsl/group.xml';
+    import transform2brush from './xsl/brush.xml';
+    import transform2image from './xsl/image.xml';
 
     // import utils
     import { transformXML } from './utils/xslt';
@@ -33,25 +34,26 @@
     var newSource = '',
         sourceHolder = '',
         xsltRule = new XMLSerializer().serializeToString(transform2group),
-        resultView = '<span style="color: gray">Select only one layer with<br/>frame/group/component/instance <br/>and click the button "Get code"</span>',
+        textContent = '',
+        resultView = '',
         disabled = true,
         resultHolder,
-        errorMessage = '¯\\_(ツ)_/¯',
         isBrush = true,
         preResult,
-        displayedСode = {value: 'group'};
+        displayedСode = {value: 'group'},
+        isEmpty = true,
+        isError = false;
 
     // this is a reactive variable to the primary buttons disabled prop
     $: disabled = newSource == '';
 
     // For debugging in browser
-    // import sourceCode from "./xml/dummy.xml";
+    // import sourceCode from "./test.xml";
     // newSource = new XMLSerializer().serializeToString(sourceCode);
 
     // Callback function gets executed once the component has mounted
     onMount(() => {
         document.getElementById('wrapper').classList.remove('hide');
-        resultHolder = document.getElementById('code');
     });
 
     // Handler for incoming messages from Figma
@@ -65,17 +67,10 @@
      * Show formated code
      */
     function showСode() {
-        if (newSource != '') {
-            sourceHolder = newSource;
-        }
-        
-        if (sourceHolder == '') {
-            return;
-        }
-
         if (sourceHolder.indexOf('<path ') == -1 && displayedСode.value != 'source') {
-            resultView = errorMessage;
-            return;
+            isError = true;
+        } else {
+            isError = false;
         }
 
         switch (displayedСode.value) {
@@ -103,6 +98,20 @@
     }
 
     /**
+     * Update and show new code
+     */
+    function getCode() {
+        if (newSource != '') {
+            sourceHolder = newSource;
+            isEmpty = false;
+        } else {
+            isEmpty = true;
+            return;
+        }
+        showСode();
+    }
+
+    /**
      * Highlight code
      * @param {String} code plain text
      * @returns {String} formatted html text
@@ -115,7 +124,24 @@
      * Copy code to clipboard
      */
     function copy() {
-        setClipboard(resultHolder);
+        resultHolder = document.getElementById('code');
+        if (resultHolder) {
+            setClipboard(resultHolder);
+        }
+    }
+
+    /**
+     * Alternate show code
+     */
+    function showSource() {
+        displayedСode.value = 'source';
+        menuItems = [
+            { value: "group", label: "GeometryGroup", group: null, selected: false },
+            { value: "brush", label: "DrawingBrush", group: null, selected: false },
+            { value: "image", label: "DrawingImage", group: null, selected: false },
+            { value: "source", label: "Source", group: null, selected: true },
+        ];
+        showСode();
     }
 
 </script>
@@ -132,7 +158,7 @@
                 bind:value={displayedСode}
                 class="mb-xxsmall"/>
         </div>
-        {#if displayedСode.value != 'group'}
+        {#if displayedСode.value != 'group' && displayedСode.value != 'source'}
             <div >
                 <Switch 
                     on:change={showСode} 
@@ -144,17 +170,46 @@
         {/if}
     </div>
 
-    <!-- Show result here -->
-    <div class="view">
-        <pre><code id="code" class="language-html">{@html resultView}</code></pre>
-    </div>
+    {#if isEmpty }
+        <!-- Wellcome message -->
+        <div class="message">
+            <svg width="64px" height="64px">
+                <use xlink:href="#wellcome"></use>
+            </svg>
+            <p>
+                Select only one layer with<br/>
+                frame, group, component or instance
+            </p>
+        </div>
+    {/if}
+
+    {#if isError && displayedСode.value != 'source' && !isEmpty }
+        <!-- Error message -->
+        <div class="message">
+            <svg width="64px" height="64px">
+                <use xlink:href="#warning"></use>
+            </svg>
+            <p>
+                No supported items found<br/>
+                <a href={'#'} on:click={showSource}>Show source</a>
+            </p>
+        </div>
+    {/if}
+
+    {#if ( !isEmpty && displayedСode.value == 'source' ) || ( !isEmpty && !isError ) }
+        <!-- Show result here -->
+        <div class="view">
+            <pre><code id="code" class="language-html">{@html resultView}</code></pre>
+        </div>
+    {/if}
 
     <!-- Footer -->
     <div class="flex p-xxsmall">
-        <Button on:click={showСode} bind:disabled>Get Code</Button>
+        <Button on:click={getCode} bind:disabled>Get Code</Button>
         <Button on:click={copy} variant="secondary" class="ml-xxsmall btn">Copy</Button>
     </div>
 </div>
+{@html SvgName}
 
 <style>
     .view {
@@ -174,6 +229,18 @@
     pre::-webkit-scrollbar, /* Hide scrollbar for Chrome, Safari and Opera */
     .hide {
         display: none;
+    }
+
+    .message {
+        height: 126px;
+        margin: 0 0 15px;
+        font-size: 11px;
+        line-height: 16px;
+        color: gray;
+        text-align: center;
+    }
+    .message p {
+        margin: 4px;
     }
 
 </style>

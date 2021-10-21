@@ -33,25 +33,25 @@
                 <xsl:attribute name="Geometry">
                   <xsl:value-of select="@d"/>
                 </xsl:attribute>
-                  <!-- Сolouring -->
-                  <xsl:attribute name="Brush">
-                    <xsl:text>#</xsl:text>
-                    <!-- Get transparency -->
-                    <xsl:if test="@fill-opacity">
-                      <xsl:value-of select="substring($hexTransparency, @fill-opacity*200+1, 2)"/>
-                    </xsl:if>
-                    <!-- Get color -->
-                    <xsl:choose>
-                      <xsl:when test="starts-with(@fill, '#')">
-                        <xsl:value-of select="substring(@fill, 2)"/>
-                      </xsl:when>
-                      <xsl:otherwise>
-                        <xsl:call-template name="NameToHex">
-                            <xsl:with-param name="color"><xsl:value-of select="@fill"/></xsl:with-param>
-                        </xsl:call-template>
-                      </xsl:otherwise>
-                    </xsl:choose>
-                  </xsl:attribute>
+                <!-- Сolouring -->
+                <xsl:attribute name="Brush">
+                  <xsl:text>#</xsl:text>
+                  <!-- Get transparency -->
+                  <xsl:if test="@fill-opacity">
+                    <xsl:value-of select="substring($hexTransparency, @fill-opacity*200+1, 2)"/>
+                  </xsl:if>
+                  <!-- Get color -->
+                  <xsl:choose>
+                    <xsl:when test="starts-with(@fill, '#')">
+                      <xsl:value-of select="substring(@fill, 2)"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                      <xsl:call-template name="NameToHex">
+                          <xsl:with-param name="color"><xsl:value-of select="@fill"/></xsl:with-param>
+                      </xsl:call-template>
+                    </xsl:otherwise>
+                  </xsl:choose>
+                </xsl:attribute>
               </GeometryDrawing>
             </xsl:for-each>
           </DrawingGroup>
