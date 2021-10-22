@@ -9,6 +9,20 @@ https://www.figma.com/community/plugin/1029415284789228817/Figma2xaml
 This boilerplate using for creating plugin:
 https://github.com/thomas-lowry/figsvelte
 
+## Usage
+
+1. Select only one layer with frame, group, component or instance
+2. Press `Get code` button
+3. Select the required code format from the dropdown list
+4. Press `Copy` button
+
+## Installation and contributing
+
+1. Clone the repository: `git clone https://github.com/igorageev/figma2xaml.git`
+2. Go to the directory: `cd figma2xaml`
+3. Install the packages: `npm install`
+5. Add a new development plugin to Figma
+6. Select the `figma2xaml/build/manifest.json` file as the manifest
 
 ## Development
 
