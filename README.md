@@ -1,6 +1,6 @@
 # Figma2xaml
 
-This plugin can help you convert simple vector paths to xaml (eXtensible Application Markup Language). Don't forget to simplify all the elements into vector paths using the commands "Flatten" and "Outline Stroke".
+This plugin can help you convert simple vector paths to xaml (eXtensible Application Markup Language). Don't forget to simplify all the elements into vector paths using boolean operations ([see example](https://github.com/igorageev/figma2xaml/blob/main/trick.md)) or commands "Flatten" and "Outline Stroke".
 
 https://www.figma.com/community/plugin/1029415284789228817/Figma2xaml
 
