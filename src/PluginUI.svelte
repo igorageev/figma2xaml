@@ -95,6 +95,7 @@
 
         preResult = transformXML(sourceHolder, xsltRule);
 
+        preResult = preResult.replaceAll(/ xmlns=""/g, '');
         if (!isBrush) {
             preResult = preResult.replaceAll(/ Brush=".+?"/g, '');
         }

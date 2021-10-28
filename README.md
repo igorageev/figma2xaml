@@ -16,6 +16,14 @@ https://github.com/thomas-lowry/figsvelte
 3. Press `Get code` button
 4. Press `Copy` button
 
+## Supported features:
+
+- GeometryDrawing https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.geometrydrawing
+- Brush https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.geometrydrawing.brush
+- LinearGradientBrush https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.lineargradientbrush
+- Pen https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.geometrydrawing.pen
+- Transparent color https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.color.a
+
 ## Installation and contributing
 
 1. Clone the repository: `git clone https://github.com/igorageev/figma2xaml.git`
@@ -26,17 +34,17 @@ https://github.com/thomas-lowry/figsvelte
 
 ## Development
 
-During development, watch your project for changes with the following command.
+During development, watch your project for changes with the following command:
 
 ```bash
 npm run dev
 ```
 
-Start building your plugin UI in `'src/Plugin.svelte'`.
+Start editing plugin UI in `'src/Plugin.svelte'`.
 
 ## Build
 
-When ready to package up your final Figma Plugin:
+When ready to package:
 
 ```bash
 npm run build
