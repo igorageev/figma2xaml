@@ -18,11 +18,11 @@ https://github.com/thomas-lowry/figsvelte
 
 ## Supported features:
 
-- GeometryDrawing https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.geometrydrawing
-- Brush https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.geometrydrawing.brush
-- LinearGradientBrush https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.lineargradientbrush
-- Pen https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.geometrydrawing.pen
-- Transparent color https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.color.a
+- [GeometryDrawing](https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.geometrydrawing)
+- [Brush](https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.geometrydrawing.brush)
+- [LinearGradientBrush](https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.lineargradientbrush)
+- [Pen](https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.geometrydrawing.pen)
+- [Transparent color](https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.color.a)
 
 ## Installation and contributing
 
