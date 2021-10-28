@@ -92,13 +92,15 @@
                 resultView = getHighlightedCode(sourceHolder);
                 return;
         }
-
+        // Get result
         preResult = transformXML(sourceHolder, xsltRule);
-
+        // Сlean result
         preResult = preResult.replaceAll(/ xmlns=""/g, '');
         if (!isBrush) {
+            preResult = preResult.replaceAll(/>\n.+?<GeometryDrawing\.(.|\n)*?<\/GeometryDrawing>/g, '/>');
             preResult = preResult.replaceAll(/ Brush=".+?"/g, '');
         }
+        // Highlight result
         preResult = getHighlightedCode(preResult);
         resultView = preResult;
     }
