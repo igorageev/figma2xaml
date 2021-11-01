@@ -16,7 +16,7 @@
     import { setClipboard, selectText } from './utils/clipboard';
 
     // import some components
-    import { Button, Label, SelectMenu, Switch } from "figma-plugin-ds-svelte";
+    import { Button, Label, SelectMenu, Switch, Icon, IconAdjust, IconButton, Textarea } from "figma-plugin-ds-svelte";
 
     // import and register library for highlighting code
     import hljs from 'highlight.js/lib/core';
@@ -35,15 +35,21 @@
         nameSelected = '',
         nameCurrent = '',
         sourceHolder = '',
-        xsltRule = new XMLSerializer().serializeToString(transform2group),
+        xsltGroup = new XMLSerializer().serializeToString(transform2group),
+        xsltBrush = new XMLSerializer().serializeToString(transform2brush),
+        xsltImage = new XMLSerializer().serializeToString(transform2image),
+        xsltRule = xsltGroup,
         resultView = '',
         disabled = true,
         resultHolder,
         isBrush = true,
         preResult,
         displayedСode = {value: 'group'},
+        oldDisplayedCode = displayedСode.value,
+        selected = false,
         isEmpty = true,
-        isError = false;
+        isError = false,
+        errorMessage;
 
     // this is a reactive variable to the primary buttons disabled prop
     $: disabled = newSource == '';
@@ -74,26 +80,38 @@
     function showСode() {
         if (sourceHolder.indexOf('<path ') == -1 && displayedСode.value != 'source') {
             isError = true;
+            errorMessage = 'No supported items found';
         } else {
             isError = false;
         }
 
+        saveChanges();
+        oldDisplayedCode = displayedСode.value;
+
         switch (displayedСode.value) {
             case "group":
-                xsltRule = new XMLSerializer().serializeToString(transform2group);
+                xsltRule = xsltGroup;
                 break;
             case "brush":
-                xsltRule = new XMLSerializer().serializeToString(transform2brush);
+                xsltRule = xsltBrush;
                 break;
             case "image":
-                xsltRule = new XMLSerializer().serializeToString(transform2image);
+                xsltRule = xsltImage;
                 break;
             default:
                 resultView = getHighlightedCode(sourceHolder);
                 return;
         }
+
+        
         // Get result
         preResult = transformXML(sourceHolder, xsltRule);
+
+        if (preResult[0] != "<") {
+            isError = true;
+            errorMessage = preResult;
+            return;
+        }
         // Сlean result
         preResult = preResult.replaceAll(/ xmlns=""/g, '');
         if (!isBrush) {
@@ -141,6 +159,51 @@
     }
 
     /**
+     * Toggle tweak mode
+     */
+    function underHood() {
+        selected = !selected;
+        saveChanges();
+    }
+
+    /**
+     * Save XSLT tweaks
+     */
+    function saveChanges() {
+        switch (oldDisplayedCode) {
+            case "group":
+                xsltGroup = xsltRule;
+                break;
+            case "brush":
+                xsltBrush = xsltRule;
+                break;
+            case "image":
+                xsltImage = xsltRule;
+                break;
+        }
+    }
+
+    /**
+     * Reset XSLT tweaks
+     */
+    function reset() {
+        switch (displayedСode.value) {
+            case "group":
+                xsltGroup = new XMLSerializer().serializeToString(transform2group);
+                xsltRule = xsltGroup;
+                break;
+            case "brush":
+                xsltBrush = new XMLSerializer().serializeToString(transform2brush);
+                xsltRule = xsltBrush;
+                break;
+            case "image":
+                xsltImage = new XMLSerializer().serializeToString(transform2image);
+                xsltRule = xsltImage;
+                break;
+        }
+    }
+
+    /**
      * Displaying the source bypassing the menu
      */
     function showSource() {
@@ -178,46 +241,62 @@
                 </Switch>
             </div>
         {/if}
+        {#if (displayedСode.value != 'source') }
+        <div>
+            <IconButton on:click={underHood} iconName={IconAdjust} bind:selected />
+        </div>
+        {/if}
     </div>
 
-    {#if isEmpty }
-        <!-- Wellcome message -->
-        <div class="message">
-            <svg width="64px" height="64px">
-                <use xlink:href="#wellcome"></use>
-            </svg>
-            <p>
-                Select only one layer with<br/>
-                frame, group, component or instance
-            </p>
+    {#if (selected && displayedСode.value != 'source') }
+        <textarea spellcheck="false" rows="8" bind:value={xsltRule} ></textarea>
+        <!-- Footer -->
+        <div class="flex p-xxsmall">
+            <Button on:click={reset} variant="secondary">Reset</Button>
+        </div>
+    {:else}
+
+        {#if isEmpty }
+            <!-- Wellcome message -->
+            <div class="message">
+                <svg width="64px" height="64px">
+                    <use xlink:href="#wellcome"></use>
+                </svg>
+                <p>
+                    Select only one layer with<br/>
+                    frame, group, component or instance
+                </p>
+            </div>
+        {/if}
+
+        {#if isError && displayedСode.value != 'source' && !isEmpty }
+            <!-- Error message -->
+            <div class="message">
+                <svg width="64px" height="64px">
+                    <use xlink:href="#warning"></use>
+                </svg>
+                <p>
+                    {@html errorMessage}
+                    <br/><a href={'#'} on:click={showSource}>Show source</a>
+                </p>
+            </div>
+        {/if}
+
+        {#if ( !isEmpty && displayedСode.value == 'source' ) || ( !isEmpty && !isError ) }
+            <!-- Show result here -->
+            <div class="view">
+                <pre><code id="code" class="language-html">{@html resultView}</code></pre>
+            </div>
+        {/if}
+
+        <!-- Footer -->
+        <div class="flex p-xxsmall">
+            <Button on:click={getCode} bind:disabled>Get Code</Button>
+            <Button on:click={copy} variant="secondary" class="ml-xxsmall btn">Copy</Button>
         </div>
     {/if}
 
-    {#if isError && displayedСode.value != 'source' && !isEmpty }
-        <!-- Error message -->
-        <div class="message">
-            <svg width="64px" height="64px">
-                <use xlink:href="#warning"></use>
-            </svg>
-            <p>
-                No supported items found<br/>
-                <a href={'#'} on:click={showSource}>Show source</a>
-            </p>
-        </div>
-    {/if}
 
-    {#if ( !isEmpty && displayedСode.value == 'source' ) || ( !isEmpty && !isError ) }
-        <!-- Show result here -->
-        <div class="view">
-            <pre><code id="code" class="language-html">{@html resultView}</code></pre>
-        </div>
-    {/if}
-
-    <!-- Footer -->
-    <div class="flex p-xxsmall">
-        <Button on:click={getCode} bind:disabled>Get Code</Button>
-        <Button on:click={copy} variant="secondary" class="ml-xxsmall btn">Copy</Button>
-    </div>
 </div>
 {@html SvgName}
 
@@ -257,6 +336,32 @@
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
+    }
+
+    textarea {
+        font-family: var(--font-stack);
+        font-size: var(--font-size-xsmall);
+        font-weight: var(--font-weight-normal);
+        letter-spacing: var( --font-letter-spacing-neg-xsmall);
+        line-height: var(--line-height);
+        position: relative;
+        display: flex;
+        overflow: visible;
+        align-items: center;
+        width: 100%;
+        min-height: 62px;
+        margin: 1px 0 11px 0;
+        padding: 7px 4px 9px 7px;
+        color: var(--black8);
+        border: 1px solid var(--black1);
+        border-radius: var(--border-radius-small);
+        outline: none;
+        background-color: var(--white);
+        resize: none;
+        overflow-y: auto;
+    }
+    textarea:focus {
+        border-color: var(--blue);
     }
 
 </style>
