@@ -7,9 +7,10 @@
     import SvgName from './images.svg';
 
     // import xslt
-    import transform2group from './xsl/group.xml';
-    import transform2brush from './xsl/brush.xml';
-    import transform2image from './xsl/image.xml';
+    import initGroupRules from './xsl/group.xslt';
+    import initBrushRules from './xsl/brush.xslt';
+    import initImageRules from './xsl/image.xslt';
+    //let modeNames = ["", "initGroupRules", "initBrushRules", "initImageRules"];
 
     // import utils
     import { transformXML } from './utils/xslt';
@@ -23,40 +24,62 @@
     import htmlHighlight from 'highlight.js/lib/languages/xml';
     hljs.registerLanguage('xml', htmlHighlight);
 
-    // menu items, this is an array of objects to populate to our select menus
-    let menuItems = [
-        { value: "group", label: "GeometryGroup", group: null, selected: true },
-        { value: "brush", label: "DrawingBrush", group: null, selected: false },
-        { value: "image", label: "DrawingImage", group: null, selected: false },
-        { value: "source", label: "Source", group: null, selected: false },
-    ];
+    let rulesStore = [
+        { 
+            id: 0,
+            label: "Source", 
+            selected: false,
+            showFilter: false,
+            rules: ''
+        },
+        { 
+            id: 1,
+            label: "GeometryGroup", 
+            selected: true,
+            showFilter: false,
+            rules: initGroupRules
+        },
+        {
+            id: 2,
+            label: "DrawingBrush", 
+            selected: false,
+            showFilter: true,
+            rules: initBrushRules
+        },
+        { 
+            id: 3,
+            label: "DrawingImage", 
+            selected: false,
+            showFilter: true,
+            rules: initImageRules
+        }
+    ];    
 
-    var newSource = '',
+    let menuItems,
+        newSource = '',
         nameSelected = '',
-        nameCurrent = '',
         sourceHolder = '',
-        xsltGroup = new XMLSerializer().serializeToString(transform2group),
-        xsltBrush = new XMLSerializer().serializeToString(transform2brush),
-        xsltImage = new XMLSerializer().serializeToString(transform2image),
-        xsltRule = xsltGroup,
+        xsltRule = initGroupRules,
         resultView = '',
         disabled = true,
         resultHolder,
         isBrush = true,
         preResult,
-        displayedСode = {value: 'group'},
-        oldDisplayedCode = displayedСode.value,
+        currentMode = {id: 0},
+        pastMode = currentMode.id,
         selected = false,
         isEmpty = true,
         isError = false,
         errorMessage;
 
+    updateMenu(0);
+
     // this is a reactive variable to the primary buttons disabled prop
     $: disabled = newSource == '';
 
     // For debugging in browser
-    // import sourceCode from "./test.xml";
-    // newSource = new XMLSerializer().serializeToString(sourceCode);
+    // import sourceCode from "./test.svg";
+    // newSource = sourceCode;
 
     // Callback function gets executed once the component has mounted
     onMount(() => {
@@ -67,7 +90,7 @@
     onmessage = (event) => {
         let received = event.data.pluginMessage;
         if (received.id != '') {
-            nameSelected = received.id;
+            nameSelected = 'of ' + received.id;
         }
         received = received.svg.replace('xmlns="http://www.w3.org/2000/svg"', "");
         // alert(received);
@@ -75,34 +98,39 @@
     };
 
     /**
+     * Update items in menu of rules
+     */
+    function updateMenu() {
+        menuItems = rulesStore.map(item => ({ 
+            id: item.id, 
+            label: item.label,
+            group: null,
+            selected: item.selected
+        }));
+    }
+
+    /**
      * Show formated code
      */
     function showСode() {
-        if (sourceHolder.indexOf('<path ') == -1 && displayedСode.value != 'source') {
+        if (sourceHolder.indexOf('<path ') == -1 && currentMode.id != 0) {
             isError = true;
             errorMessage = 'No supported items found';
         } else {
             isError = false;
         }
 
-        saveChanges();
-        oldDisplayedCode = displayedСode.value;
-
-        switch (displayedСode.value) {
-            case "group":
-                xsltRule = xsltGroup;
-                break;
-            case "brush":
-                xsltRule = xsltBrush;
-                break;
-            case "image":
-                xsltRule = xsltImage;
-                break;
-            default:
-                resultView = getHighlightedCode(sourceHolder);
-                return;
+        if (selected) {
+            saveChanges();
         }
+        pastMode = currentMode.id;
 
+        if (currentMode.id != 0) {
+            xsltRule = rulesStore[currentMode.id].rules;
+        } else {
+            resultView = getHighlightedCode(sourceHolder);
+            return;
+        }
         
         // Get result
         preResult = transformXML(sourceHolder, xsltRule);
@@ -131,7 +159,6 @@
         if (newSource != '') {
             sourceHolder = newSource;
             isEmpty = false;
-            nameCurrent = 'of ' + nameSelected;
         } else {
             isEmpty = true;
             return;
@@ -163,42 +190,35 @@
      */
     function underHood() {
         selected = !selected;
-        saveChanges();
+        if (!selected) {
+            saveChanges();
+            showСode();
+        }
     }
 
     /**
      * Save XSLT tweaks
      */
     function saveChanges() {
-        switch (oldDisplayedCode) {
-            case "group":
-                xsltGroup = xsltRule;
-                break;
-            case "brush":
-                xsltBrush = xsltRule;
-                break;
-            case "image":
-                xsltImage = xsltRule;
-                break;
-        }
+        rulesStore[pastMode].rules = xsltRule;
     }
 
     /**
      * Reset XSLT tweaks
      */
     function reset() {
-        switch (displayedСode.value) {
-            case "group":
-                xsltGroup = new XMLSerializer().serializeToString(transform2group);
-                xsltRule = xsltGroup;
+        switch (currentMode.id) {
+            case 1:
+                rulesStore[1].rules = initGroupRules;
+                xsltRule = initGroupRules;
                 break;
-            case "brush":
-                xsltBrush = new XMLSerializer().serializeToString(transform2brush);
-                xsltRule = xsltBrush;
+            case 2:
+                rulesStore[2].rules = initBrushRules;
+                xsltRule = initBrushRules;
                 break;
-            case "image":
-                xsltImage = new XMLSerializer().serializeToString(transform2image);
-                xsltRule = xsltImage;
+            case 3:
+                rulesStore[3].rules = initImageRules;
+                xsltRule = initImageRules;
                 break;
         }
     }
@@ -207,13 +227,8 @@
      * Displaying the source bypassing the menu
      */
     function showSource() {
-        displayedСode.value = 'source';
-        menuItems = [
-            { value: "group", label: "GeometryGroup", group: null, selected: false },
-            { value: "brush", label: "DrawingBrush", group: null, selected: false },
-            { value: "image", label: "DrawingImage", group: null, selected: false },
-            { value: "source", label: "Source", group: null, selected: true },
-        ];
+        currentMode.id = 0;
+        updateMenu(0);
         showСode();
     }
 
@@ -222,16 +237,16 @@
 <div id="wrapper" class="wrapper p-xxsmall hide">
 
     <!-- Setup controls -->
-    <Label>Code <span class="name">{nameCurrent}</span></Label>
+    <Label>Code <span class="name">{nameSelected}</span></Label>
     <div class="flex row justify-content-between">
         <div class="flex-grow">
             <SelectMenu
                 on:change={showСode}
                 bind:menuItems
-                bind:value={displayedСode}
+                bind:value={currentMode}
                 class="mb-xxsmall"/>
         </div>
-        {#if displayedСode.value != 'group' && displayedСode.value != 'source'}
+        {#if rulesStore[currentMode.id].showFilter}
             <div >
                 <Switch 
                     on:change={showСode} 
@@ -241,14 +256,14 @@
                 </Switch>
             </div>
         {/if}
-        {#if (displayedСode.value != 'source') }
+        {#if (currentMode.id != 0) }
         <div>
             <IconButton on:click={underHood} iconName={IconAdjust} bind:selected />
         </div>
         {/if}
     </div>
 
-    {#if (selected && displayedСode.value != 'source') }
+    {#if (selected && currentMode.id != 0) }
         <textarea spellcheck="false" rows="8" bind:value={xsltRule} ></textarea>
         <!-- Footer -->
         <div class="flex p-xxsmall">
@@ -269,7 +284,7 @@
             </div>
         {/if}
 
-        {#if isError && displayedСode.value != 'source' && !isEmpty }
+        {#if isError && currentMode.value != 'source' && !isEmpty }
             <!-- Error message -->
             <div class="message">
                 <svg width="64px" height="64px">
@@ -282,7 +297,7 @@
             </div>
         {/if}
 
-        {#if ( !isEmpty && displayedСode.value == 'source' ) || ( !isEmpty && !isError ) }
+        {#if ( !isEmpty && currentMode.value == 'source' ) || ( !isEmpty && !isError ) }
             <!-- Show result here -->
             <div class="view">
                 <pre><code id="code" class="language-html">{@html resultView}</code></pre>

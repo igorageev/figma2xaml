@@ -5,7 +5,8 @@ import livereload from 'rollup-plugin-livereload';
 import {terser} from 'rollup-plugin-terser';
 import svg from 'rollup-plugin-svg';
 import typescript from 'rollup-plugin-typescript';
-import xml from "rollup-plugin-xml";
+import { string } from "rollup-plugin-string";
+// import xml from "rollup-plugin-xml";
 
 /* Post CSS */
 import postcss from 'rollup-plugin-postcss';
@@ -28,10 +29,14 @@ export default [{
         // enable run-time checks when not in production
         dev: !production
       }),
-
-      xml({
-        format: "XMLDocument" //"compact" | "non-compact" | "XMLDocument"
+      string({
+        // Required to be specified
+        include: "**/*.xslt"
       }),
+
+    //   xml({
+    //     format: "XMLDocument" //"compact" | "non-compact" | "XMLDocument"
+    //   }),
 
       // If you have external dependencies installed from
       // npm, you'll most likely need these plugins. In

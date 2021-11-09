@@ -109,7 +109,7 @@
       <DrawingBrush>
         <!-- Get id of resource -->
         <xsl:attribute name="x:Key">
-          <xsl:value-of select="svg/node()/@id"/>
+          <xsl:value-of select="translate(svg/node()/@id, '-/. ', '__')"/>
         </xsl:attribute>
         <xsl:attribute name="Stretch">None</xsl:attribute>
         <DrawingBrush.Drawing>

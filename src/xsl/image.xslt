@@ -6,6 +6,7 @@
   https://github.com/igorageev/figma2xaml/issues
 
 -->
+
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <!-- Here is the magic: set indent to format the output -->
   <xsl:output omit-xml-declaration="yes" indent="yes"/>
@@ -106,7 +107,7 @@
       <DrawingImage>
         <!-- Get id of resource -->
         <xsl:attribute name="x:Key">
-          <xsl:value-of select="svg/node()/@id"/>
+          <xsl:value-of select="translate(svg/node()/@id, '-/. ', '__')"/>
         </xsl:attribute>
         <DrawingImage.Drawing>
           <DrawingGroup>
