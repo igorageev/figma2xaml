@@ -227,6 +227,8 @@
      * Displaying the source bypassing the menu
      */
     function showSource() {
+        rulesStore[currentMode.id].selected = false;
+        rulesStore[0].selected = true;
         currentMode.id = 0;
         updateMenu(0);
         showСode();
