@@ -10,7 +10,7 @@
     import initGroupRules from './xsl/group.xslt';
     import initBrushRules from './xsl/brush.xslt';
     import initImageRules from './xsl/image.xslt';
-    //let modeNames = ["", "initGroupRules", "initBrushRules", "initImageRules"];
+    import initCanvasRules from './xsl/canvas.xslt';
 
     // import utils
     import { transformXML } from './utils/xslt';
@@ -27,31 +27,38 @@
     let rulesStore = [
         { 
             id: 0,
-            label: "Source", 
+            label: 'Source', 
             selected: false,
             showFilter: false,
             rules: ''
         },
         { 
             id: 1,
-            label: "GeometryGroup", 
+            label: 'GeometryGroup', 
             selected: true,
             showFilter: false,
             rules: initGroupRules
         },
         {
             id: 2,
-            label: "DrawingBrush", 
+            label: 'DrawingBrush', 
             selected: false,
             showFilter: true,
             rules: initBrushRules
         },
         { 
             id: 3,
-            label: "DrawingImage", 
+            label: 'DrawingImage', 
             selected: false,
             showFilter: true,
             rules: initImageRules
+        },
+        { 
+            id: 4,
+            label: 'Canvas', 
+            selected: false,
+            showFilter: true,
+            rules: initCanvasRules
         }
     ];    
 
@@ -67,7 +74,7 @@
         preResult,
         currentMode = {id: 0},
         pastMode = currentMode.id,
-        selected = false,
+        tweakMode = false,
         isEmpty = true,
         isError = false,
         errorMessage;
@@ -92,7 +99,7 @@
         if (received.id != '') {
             nameSelected = 'of ' + received.id;
         }
-        received = received.svg.replace('xmlns="http://www.w3.org/2000/svg"', "");
+        received = received.svg.replace('xmlns="http://www.w3.org/2000/svg"', '');
         // alert(received);
         newSource = received;
     };
@@ -120,7 +127,7 @@
             isError = false;
         }
 
-        if (selected) {
+        if (tweakMode) {
             saveChanges();
         }
         pastMode = currentMode.id;
@@ -135,7 +142,7 @@
         // Get result
         preResult = transformXML(sourceHolder, xsltRule);
 
-        if (preResult[0] != "<") {
+        if (preResult[0] != '<') {
             isError = true;
             errorMessage = preResult;
             return;
@@ -143,8 +150,18 @@
         // Сlean result
         preResult = preResult.replaceAll(/ xmlns=""/g, '');
         if (!isBrush) {
-            preResult = preResult.replaceAll(/>\n.+?<GeometryDrawing\.(.|\n)*?<\/GeometryDrawing>/g, '/>');
-            preResult = preResult.replaceAll(/ Brush=".+?"/g, '');
+            switch (currentMode.id) {
+                case 2:
+                case 3:
+                    preResult = preResult.replaceAll(/>\n.+?<GeometryDrawing\.(.|\n)*?<\/GeometryDrawing>/g, '/>');
+                    preResult = preResult.replaceAll(/ Brush=".+?"/g, '');
+                    break;
+                case 4:
+                    preResult = preResult.replaceAll(/ Fill=".+?"/g, '');
+                    preResult = preResult.replaceAll(/ Stroke.*?=".+?"/g, '');
+                    preResult = preResult.replaceAll(/>\n.+?<Path\.(.|\n)*?<\/Path>/g, '/>');
+                    break;
+            }
         }
         // Highlight result
         preResult = getHighlightedCode(preResult);
@@ -172,7 +189,7 @@
      * @returns {String} formatted html text
      */
      function getHighlightedCode(code) {
-        return hljs.highlight(code, { language: "xml" }).value;
+        return hljs.highlight(code, { language: 'xml' }).value;
     }
 
     /**
@@ -189,8 +206,8 @@
      * Toggle tweak mode
      */
     function underHood() {
-        selected = !selected;
-        if (!selected) {
+        tweakMode = !tweakMode;
+        if (!tweakMode) {
             saveChanges();
             showСode();
         }
@@ -220,6 +237,10 @@
                 rulesStore[3].rules = initImageRules;
                 xsltRule = initImageRules;
                 break;
+            case 4:
+                rulesStore[4].rules = initCanvasRules;
+                xsltRule = initCanvasRules;
+                break;
         }
     }
 
@@ -230,7 +251,7 @@
         rulesStore[currentMode.id].selected = false;
         rulesStore[0].selected = true;
         currentMode.id = 0;
-        updateMenu(0);
+        updateMenu();
         showСode();
     }
 
@@ -260,12 +281,12 @@
         {/if}
         {#if (currentMode.id != 0) }
         <div>
-            <IconButton on:click={underHood} iconName={IconAdjust} bind:selected />
+            <IconButton on:click={underHood} iconName={IconAdjust} bind:tweakMode />
         </div>
         {/if}
     </div>
 
-    {#if (selected && currentMode.id != 0) }
+    {#if (tweakMode && currentMode.id != 0) }
         <textarea spellcheck="false" rows="8" bind:value={xsltRule} ></textarea>
         <!-- Footer -->
         <div class="flex p-xxsmall">
@@ -286,7 +307,7 @@
             </div>
         {/if}
 
-        {#if isError && currentMode.value != 'source' && !isEmpty }
+        {#if isError && currentMode.id != 0 && !isEmpty }
             <!-- Error message -->
             <div class="message">
                 <svg width="64px" height="64px">
@@ -299,7 +320,7 @@
             </div>
         {/if}
 
-        {#if ( !isEmpty && currentMode.value == 'source' ) || ( !isEmpty && !isError ) }
+        {#if ( !isEmpty && currentMode.id == 0 ) || ( !isEmpty && !isError ) }
             <!-- Show result here -->
             <div class="view">
                 <pre><code id="code" class="language-html">{@html resultView}</code></pre>
