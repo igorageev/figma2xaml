@@ -19,6 +19,7 @@ https://github.com/thomas-lowry/figsvelte
 ## Supported features:
 
 - [GeometryDrawing](https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.geometrydrawing)
+- [Path](https://docs.microsoft.com/en-us/uwp/api/windows.ui.xaml.shapes.path)
 - [Brush](https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.geometrydrawing.brush)
 - [LinearGradientBrush](https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.lineargradientbrush)
 - [Pen](https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.geometrydrawing.pen)
