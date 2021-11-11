@@ -11,10 +11,10 @@ https://github.com/thomas-lowry/figsvelte
 
 ## Usage
 
-1. Сhoose the required code format from the dropdown menu
+1. Select the required code format from the dropdown menu
 2. Select only one layer with frame, group, component or instance
-3. Press `Get code` button
-4. Press `Copy` button
+3. Press `Get code`  and then `Copy` button
+4. Create from it a Resource Dictionary in Visual Studio
 
 ## Supported features:
 
