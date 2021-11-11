@@ -4,7 +4,7 @@
     import { GlobalCSS } from 'figma-plugin-ds-svelte';
     import { onMount } from 'svelte';
     import 'highlight.js/styles/github.css';
-    import SvgName from './images.svg';
+    import SvgName from './img/collection.svg';
 
     // import xslt
     import initGroupRules from './xsl/group.xslt';
@@ -28,35 +28,30 @@
         { 
             id: 0,
             label: 'Source', 
-            selected: false,
             showFilter: false,
             rules: ''
         },
         { 
             id: 1,
             label: 'GeometryGroup', 
-            selected: true,
             showFilter: false,
             rules: initGroupRules
         },
         {
             id: 2,
             label: 'DrawingBrush', 
-            selected: false,
             showFilter: true,
             rules: initBrushRules
         },
         { 
             id: 3,
             label: 'DrawingImage', 
-            selected: false,
             showFilter: true,
             rules: initImageRules
         },
         { 
             id: 4,
             label: 'Canvas', 
-            selected: false,
             showFilter: true,
             rules: initCanvasRules
         }
@@ -72,11 +67,11 @@
         resultHolder,
         isBrush = true,
         preResult,
-        currentMode = {id: 0},
+        currentMode = {id: 1},
         pastMode = currentMode.id,
         tweakMode = false,
         isEmpty = true,
-        isError = false,
+        error = 0, // 0: no error; 1: svg problem; 2: xslt problem
         errorMessage;
 
     updateMenu(0);
@@ -85,7 +80,7 @@
     $: disabled = newSource == '';
 
     // For debugging in browser
-    // import sourceCode from "./test.svg";
+    // import sourceCode from "./img/test.svg";
     // newSource = sourceCode;
 
     // Callback function gets executed once the component has mounted
@@ -112,7 +107,7 @@
             id: item.id, 
             label: item.label,
             group: null,
-            selected: item.selected
+            selected: currentMode.id == item.id ? true : false
         }));
     }
 
@@ -121,10 +116,10 @@
      */
     function showСode() {
         if (sourceHolder.indexOf('<path ') == -1 && currentMode.id != 0) {
-            isError = true;
+            error = 1;
             errorMessage = 'No supported items found';
         } else {
-            isError = false;
+            error = 0;
         }
 
         if (tweakMode) {
@@ -143,7 +138,7 @@
         preResult = transformXML(sourceHolder, xsltRule);
 
         if (preResult[0] != '<') {
-            isError = true;
+            error = 2;
             errorMessage = preResult;
             return;
         }
@@ -248,11 +243,18 @@
      * Displaying the source bypassing the menu
      */
     function showSource() {
-        rulesStore[currentMode.id].selected = false;
-        rulesStore[0].selected = true;
-        currentMode.id = 0;
-        updateMenu();
-        showСode();
+        switch (error) {
+            case 1:
+                rulesStore[currentMode.id].selected = false;
+                // rulesStore[0].selected = true;
+                currentMode.id = 0;
+                updateMenu();
+                showСode();
+                break;
+            case 2:
+                tweakMode = true;
+                break;
+        }
     }
 
 </script>
@@ -281,7 +283,7 @@
         {/if}
         {#if (currentMode.id != 0) }
         <div>
-            <IconButton on:click={underHood} iconName={IconAdjust} bind:tweakMode />
+            <IconButton on:click={underHood} iconName={IconAdjust} bind:selected={tweakMode} />
         </div>
         {/if}
     </div>
@@ -289,8 +291,9 @@
     {#if (tweakMode && currentMode.id != 0) }
         <textarea spellcheck="false" rows="8" bind:value={xsltRule} ></textarea>
         <!-- Footer -->
-        <div class="flex p-xxsmall">
+        <div class="flex row p-xxsmall justify-content-between">
             <Button on:click={reset} variant="secondary">Reset</Button>
+            <Label>Changes will also be lost <br>after closing the plugin</Label>
         </div>
     {:else}
 
@@ -307,7 +310,7 @@
             </div>
         {/if}
 
-        {#if isError && currentMode.id != 0 && !isEmpty }
+        {#if error && currentMode.id != 0 && !isEmpty }
             <!-- Error message -->
             <div class="message">
                 <svg width="64px" height="64px">
@@ -320,7 +323,7 @@
             </div>
         {/if}
 
-        {#if ( !isEmpty && currentMode.id == 0 ) || ( !isEmpty && !isError ) }
+        {#if ( !isEmpty && currentMode.id == 0 ) || ( !isEmpty && !error ) }
             <!-- Show result here -->
             <div class="view">
                 <pre><code id="code" class="language-html">{@html resultView}</code></pre>
