@@ -17,7 +17,7 @@
     import { setClipboard, selectText } from './utils/clipboard';
 
     // import some components
-    import { Button, Label, SelectMenu, Switch, Icon, IconAdjust, IconButton, Textarea } from "figma-plugin-ds-svelte";
+    import { Button, Label, SelectMenu, Switch, Icon, IconAdjust, IconListDetailed, IconButton, Textarea } from "figma-plugin-ds-svelte";
 
     // import and register library for highlighting code
     import hljs from 'highlight.js/lib/core';
@@ -55,7 +55,68 @@
             showFilter: true,
             rules: initCanvasRules
         }
-    ];    
+    ];
+
+    let filterStore = [
+        { 
+            label: 'Brush', 
+            show: true,
+            replacements: [
+                {
+                    rules: [2,3],
+                    find: />\n.+?<GeometryDrawing\.(.|\n)*?<\/GeometryDrawing>/g,
+                    replace: '/>'
+                },
+                {
+                    rules: [2,3],
+                    find: / Brush=".+?"/g,
+                    replace: ''
+                },
+                {
+                    rules: [4],
+                    find: / Fill=".+?"/g,
+                    replace: ''
+                },
+                {
+                    rules: [4],
+                    find: / Stroke.*?=".+?"/g,
+                    replace: ''
+                },
+                {
+                    rules: [4],
+                    find: />\n.+?<Path\.(.|\n)*?<\/Path>/g,
+                    replace: '/>'
+                }
+            ]
+        },
+        { 
+            label: 'ResourceDictionary', 
+            show: true,
+            replacements: [
+                {
+                    rules: [1,2,3,4],
+                    find: /\n\s\s/g,
+                    replace: '\n'
+                },
+                {
+                    rules: [1,2,3,4],
+                    find: /<\/?ResourceDictionary.*>\n?/g,
+                    replace: ''
+                }
+            ]
+        },
+        { 
+            label: 'Key', 
+            show: true,
+            replacements: [
+                {
+                    rules: [1,2,3,4],
+                    find: / x:Key.*?=".+?"/g,
+                    replace: ''
+                }
+            ]
+        }
+    ]
 
     let menuItems,
         newSource = '',
@@ -70,6 +131,7 @@
         currentMode = {id: 1},
         pastMode = currentMode.id,
         tweakMode = false,
+        filterMode = false,
         isEmpty = true,
         error = 0, // 0: no error; 1: svg problem; 2: xslt problem
         errorMessage;
@@ -80,8 +142,8 @@
     $: disabled = newSource == '';
 
     // For debugging in browser
-    // import sourceCode from "./img/test.svg";
-    // newSource = sourceCode;
+    import sourceCode from "./img/test.svg";
+    newSource = sourceCode;
 
     // Callback function gets executed once the component has mounted
     onMount(() => {
@@ -137,6 +199,7 @@
         // Get result
         preResult = transformXML(sourceHolder, xsltRule);
 
+        // Validate result
         if (preResult[0] != '<') {
             error = 2;
             errorMessage = preResult;
@@ -144,20 +207,18 @@
         }
         // Сlean result
         preResult = preResult.replaceAll(/ xmlns=""/g, '');
-        if (!isBrush) {
-            switch (currentMode.id) {
-                case 2:
-                case 3:
-                    preResult = preResult.replaceAll(/>\n.+?<GeometryDrawing\.(.|\n)*?<\/GeometryDrawing>/g, '/>');
-                    preResult = preResult.replaceAll(/ Brush=".+?"/g, '');
-                    break;
-                case 4:
-                    preResult = preResult.replaceAll(/ Fill=".+?"/g, '');
-                    preResult = preResult.replaceAll(/ Stroke.*?=".+?"/g, '');
-                    preResult = preResult.replaceAll(/>\n.+?<Path\.(.|\n)*?<\/Path>/g, '/>');
-                    break;
+
+        // Apply approved filters
+        for (const item of filterStore) {
+            if(!item.show) {
+                for (const action of item.replacements) {
+                    if (action.rules.includes(currentMode.id)) {
+                        preResult = preResult.replaceAll(action.find, action.replace);
+                    }
+                }
             }
         }
+
         // Highlight result
         preResult = getHighlightedCode(preResult);
         resultView = preResult;
@@ -202,7 +263,20 @@
      */
     function underHood() {
         tweakMode = !tweakMode;
+        filterMode = false;
         if (!tweakMode) {
+            saveChanges();
+            showСode();
+        }
+    }
+
+    /**
+     * Toggle filter mode
+     */
+    function showFilter() {
+        filterMode = !filterMode;
+        if (tweakMode) {
+            tweakMode = false;
             saveChanges();
             showСode();
         }
@@ -271,20 +345,11 @@
                 bind:value={currentMode}
                 class="mb-xxsmall"/>
         </div>
-        {#if rulesStore[currentMode.id].showFilter}
-            <div >
-                <Switch 
-                    on:change={showСode} 
-                    value="value" 
-                    bind:checked={isBrush}>
-                    Brush
-                </Switch>
-            </div>
-        {/if}
         {#if (currentMode.id != 0) }
-        <div>
-            <IconButton on:click={underHood} iconName={IconAdjust} bind:selected={tweakMode} />
-        </div>
+            <div class="flex row">
+                <IconButton on:click={showFilter} iconName={IconListDetailed} bind:selected={filterMode} />
+                <IconButton on:click={underHood} iconName={IconAdjust} bind:selected={tweakMode} />
+            </div>
         {/if}
     </div>
 
@@ -295,6 +360,32 @@
             <Button on:click={reset} variant="secondary">Reset</Button>
             <Label>Changes will also be lost <br>after closing the plugin</Label>
         </div>
+    {:else if (filterMode && currentMode.id != 0)}
+        <div >
+            <Switch 
+                on:change={showСode} 
+                value="value" 
+                bind:checked={filterStore[0].show}>
+                {filterStore[0].label}
+            </Switch>
+        </div>
+        <div >
+            <Switch 
+                on:change={showСode} 
+                value="value" 
+                bind:checked={filterStore[1].show}>
+                {filterStore[1].label}
+            </Switch>
+        </div>
+        <div >
+            <Switch 
+                on:change={showСode} 
+                value="value" 
+                bind:checked={filterStore[2].show}>
+                {filterStore[2].label}
+            </Switch>
+        </div>
+        <Label>Disabled items will not appear in xaml</Label>
     {:else}
 
         {#if isEmpty }
