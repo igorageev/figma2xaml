@@ -144,90 +144,90 @@
             <xsl:attribute name="ClipGeometry">M0,0 V<xsl:value-of select="svg/@height"/> H<xsl:value-of select="svg/@width"/> V0 H0 Z</xsl:attribute>
             <!-- Looping through all shapes -->
             <xsl:for-each select="//path">
-            <GeometryDrawing>
-              <!-- Get geometry -->
-              <xsl:attribute name="Geometry">
-                <xsl:value-of select="@d"/>
-              </xsl:attribute>
-              <!-- Color -->
-              <xsl:if test="@fill">
-                <xsl:choose>
-                  <!-- Gradient -->
-                  <xsl:when test="starts-with(@fill, 'url(#')">
-                    <GeometryDrawing.Brush>
-                      <xsl:call-template name="GetGradient">
-                        <xsl:with-param name="ref"><xsl:value-of select="substring-before(substring-after(@fill, 'url(#'), ')')"/></xsl:with-param>
-                      </xsl:call-template>
-                    </GeometryDrawing.Brush>
-                  </xsl:when>
-                  <!-- Solid -->
-                  <xsl:otherwise>
-                    <xsl:attribute name="Brush">
-                      <xsl:call-template name="GetColor">
-                        <xsl:with-param name="color"><xsl:value-of select="@fill"/></xsl:with-param>
-                        <xsl:with-param name="opacity"><xsl:value-of select="@fill-opacity"/></xsl:with-param>
-                      </xsl:call-template>
-                    </xsl:attribute>
-                  </xsl:otherwise>
-                </xsl:choose>
-              </xsl:if>
-              <!-- Pen -->
-              <xsl:if test="@stroke">
-                <GeometryDrawing.Pen>
-                  <Pen>
-                    <!-- Width of the stroke -->
-                    <xsl:if test="@stroke-width">
-                      <xsl:attribute name="Thickness">
-                        <xsl:value-of select="@stroke-width"/>
-                      </xsl:attribute>
-                    </xsl:if>
-                    <!-- Type of shape to use at the ends of a stroke -->
-                    <xsl:if test="@stroke-linecap">
-                      <xsl:attribute name="StartLineCap">
-                        <xsl:call-template name="CapitalizeFirst">
-                          <xsl:with-param name="text"><xsl:value-of select="@stroke-linecap"/></xsl:with-param>
+              <GeometryDrawing>
+                <!-- Get geometry -->
+                <xsl:attribute name="Geometry">
+                  <xsl:value-of select="@d"/>
+                </xsl:attribute>
+                <!-- Color -->
+                <xsl:if test="@fill">
+                  <xsl:choose>
+                    <!-- Gradient -->
+                    <xsl:when test="starts-with(@fill, 'url(#')">
+                      <GeometryDrawing.Brush>
+                        <xsl:call-template name="GetGradient">
+                          <xsl:with-param name="ref"><xsl:value-of select="substring-before(substring-after(@fill, 'url(#'), ')')"/></xsl:with-param>
+                        </xsl:call-template>
+                      </GeometryDrawing.Brush>
+                    </xsl:when>
+                    <!-- Solid -->
+                    <xsl:otherwise>
+                      <xsl:attribute name="Brush">
+                        <xsl:call-template name="GetColor">
+                          <xsl:with-param name="color"><xsl:value-of select="@fill"/></xsl:with-param>
+                          <xsl:with-param name="opacity"><xsl:value-of select="@fill-opacity"/></xsl:with-param>
                         </xsl:call-template>
                       </xsl:attribute>
-                      <xsl:attribute name="EndLineCap">
-                        <xsl:call-template name="CapitalizeFirst">
-                          <xsl:with-param name="text"><xsl:value-of select="@stroke-linecap"/></xsl:with-param>
-                        </xsl:call-template>
-                      </xsl:attribute>
-                    </xsl:if>
-                    <!-- Type of join that is used at the vertices of a Shape -->
-                    <xsl:if test="@stroke-linejoin">
-                      <xsl:attribute name="LineJoin">
-                        <xsl:call-template name="CapitalizeFirst">
-                          <xsl:with-param name="text"><xsl:value-of select="@stroke-linejoin"/></xsl:with-param>
-                        </xsl:call-template>
-                      </xsl:attribute>
-                    </xsl:if>
-                    <!-- Color -->
-                    <xsl:choose>
-                      <!-- Gradient -->
-                      <xsl:when test="starts-with(@stroke, 'url(#')">
-                        <xsl:variable name="ref" select="substring-before(substring-after(@stroke, 'url(#'), ')')" />
-                        <Pen.Brush>
-                          <xsl:call-template name="GetGradient">
-                            <xsl:with-param name="ref"><xsl:value-of select="substring-before(substring-after(@stroke, 'url(#'), ')')"/></xsl:with-param>
-                          </xsl:call-template>
-                        </Pen.Brush>
-                      </xsl:when>
-                      <!-- Solid -->
-                      <xsl:otherwise>
-                        <xsl:attribute name="Brush">
-                          <xsl:call-template name="GetColor">
-                            <xsl:with-param name="color"><xsl:value-of select="@stroke"/></xsl:with-param>
-                            <xsl:with-param name="opacity"><xsl:value-of select="@stroke-opacity"/></xsl:with-param>
+                    </xsl:otherwise>
+                  </xsl:choose>
+                </xsl:if>
+                <!-- Pen -->
+                <xsl:if test="@stroke">
+                  <GeometryDrawing.Pen>
+                    <Pen>
+                      <!-- Width of the stroke -->
+                      <xsl:if test="@stroke-width">
+                        <xsl:attribute name="Thickness">
+                          <xsl:value-of select="@stroke-width"/>
+                        </xsl:attribute>
+                      </xsl:if>
+                      <!-- Type of shape to use at the ends of a stroke -->
+                      <xsl:if test="@stroke-linecap">
+                        <xsl:attribute name="StartLineCap">
+                          <xsl:call-template name="CapitalizeFirst">
+                            <xsl:with-param name="text"><xsl:value-of select="@stroke-linecap"/></xsl:with-param>
                           </xsl:call-template>
                         </xsl:attribute>
-                      </xsl:otherwise>
-                    </xsl:choose>
-                  </Pen>
-                </GeometryDrawing.Pen>
-              </xsl:if>
-            </GeometryDrawing>
-              </xsl:for-each>
+                        <xsl:attribute name="EndLineCap">
+                          <xsl:call-template name="CapitalizeFirst">
+                            <xsl:with-param name="text"><xsl:value-of select="@stroke-linecap"/></xsl:with-param>
+                          </xsl:call-template>
+                        </xsl:attribute>
+                      </xsl:if>
+                      <!-- Type of join that is used at the vertices of a Shape -->
+                      <xsl:if test="@stroke-linejoin">
+                        <xsl:attribute name="LineJoin">
+                          <xsl:call-template name="CapitalizeFirst">
+                            <xsl:with-param name="text"><xsl:value-of select="@stroke-linejoin"/></xsl:with-param>
+                          </xsl:call-template>
+                        </xsl:attribute>
+                      </xsl:if>
+                      <!-- Color -->
+                      <xsl:choose>
+                        <!-- Gradient -->
+                        <xsl:when test="starts-with(@stroke, 'url(#')">
+                          <xsl:variable name="ref" select="substring-before(substring-after(@stroke, 'url(#'), ')')" />
+                          <Pen.Brush>
+                            <xsl:call-template name="GetGradient">
+                              <xsl:with-param name="ref"><xsl:value-of select="substring-before(substring-after(@stroke, 'url(#'), ')')"/></xsl:with-param>
+                            </xsl:call-template>
+                          </Pen.Brush>
+                        </xsl:when>
+                        <!-- Solid -->
+                        <xsl:otherwise>
+                          <xsl:attribute name="Brush">
+                            <xsl:call-template name="GetColor">
+                              <xsl:with-param name="color"><xsl:value-of select="@stroke"/></xsl:with-param>
+                              <xsl:with-param name="opacity"><xsl:value-of select="@stroke-opacity"/></xsl:with-param>
+                            </xsl:call-template>
+                          </xsl:attribute>
+                        </xsl:otherwise>
+                      </xsl:choose>
+                    </Pen>
+                  </GeometryDrawing.Pen>
+                </xsl:if>
+              </GeometryDrawing>
+            </xsl:for-each>
           </DrawingGroup>
         </DrawingImage.Drawing>
       </DrawingImage>

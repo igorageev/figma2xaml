@@ -146,7 +146,6 @@
         <xsl:attribute name="width">
           <xsl:value-of select="svg/@width"/>
         </xsl:attribute>
-
         <!-- Looping through all shapes -->
         <xsl:for-each select="//path">
           <Path>
@@ -176,14 +175,12 @@
                 </xsl:otherwise>
               </xsl:choose>
             </xsl:if>
-
             <!-- Width of the stroke -->
             <xsl:if test="@stroke-width">
               <xsl:attribute name="StrokeThickness">
                 <xsl:value-of select="@stroke-width"/>
               </xsl:attribute>
             </xsl:if>
-
             <!-- Stroke color-->
             <xsl:if test="@stroke">
               <xsl:choose>
@@ -207,10 +204,8 @@
                 </xsl:otherwise>
               </xsl:choose>
             </xsl:if>
-
           </Path>
         </xsl:for-each>
-
       </Canvas>
     </ResourceDictionary>
   </xsl:template>
