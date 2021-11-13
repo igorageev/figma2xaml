@@ -142,8 +142,8 @@
     $: disabled = newSource == '';
 
     // For debugging in browser
-    import sourceCode from "./img/test.svg";
-    newSource = sourceCode;
+    // import sourceCode from "./img/test.svg";
+    // newSource = sourceCode;
 
     // Callback function gets executed once the component has mounted
     onMount(() => {

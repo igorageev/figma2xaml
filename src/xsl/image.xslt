@@ -63,42 +63,72 @@
     )"/>
   </xsl:template>
 
-  <!-- Draw linear gradient -->
+  <!-- Draw gradient -->
   <xsl:template name="GetGradient">
     <xsl:param name="ref" />
-    <LinearGradientBrush>
-      <xsl:attribute name="MappingMode">
-        <xsl:choose>
-          <xsl:when test="//linearGradient[@id=$ref]/@gradientUnits = 'userSpaceOnUse' ">Absolute</xsl:when>
-          <xsl:otherwise>RelativeToBoundingBox</xsl:otherwise>
-        </xsl:choose>
-      </xsl:attribute>
-      <xsl:attribute name="StartPoint">
-        <xsl:value-of select="//linearGradient[@id=$ref]/@x1"/>
-        <xsl:text>,</xsl:text>
-        <xsl:value-of select="//linearGradient[@id=$ref]/@y1"/>
-      </xsl:attribute>
-      <xsl:attribute name="EndPoint">
-        <xsl:value-of select="//linearGradient[@id=$ref]/@x2"/>
-        <xsl:text>,</xsl:text>
-        <xsl:value-of select="//linearGradient[@id=$ref]/@y2"/>
-      </xsl:attribute>
-      <xsl:for-each select="//linearGradient[@id=$ref]/stop">
-        <GradientStop>
-          <xsl:attribute name="Color">
-            <xsl:call-template name="GetColor">
-              <xsl:with-param name="color"><xsl:value-of select="@stop-color"/></xsl:with-param>
-              <xsl:with-param name="opacity"><xsl:value-of select="@stop-opacity"/></xsl:with-param>
-            </xsl:call-template>
-          </xsl:attribute>
-          <xsl:if test="@offset">
-            <xsl:attribute name="Offset">
-              <xsl:value-of select="@offset" />
+    <!-- Linear -->
+    <xsl:if test="//linearGradient[@id=$ref]">
+      <LinearGradientBrush>
+        <xsl:attribute name="MappingMode">
+          <xsl:choose>
+            <xsl:when test="//linearGradient[@id=$ref]/@gradientUnits = 'userSpaceOnUse' ">Absolute</xsl:when>
+            <xsl:otherwise>RelativeToBoundingBox</xsl:otherwise>
+          </xsl:choose>
+        </xsl:attribute>
+        <xsl:attribute name="StartPoint">
+          <xsl:value-of select="//linearGradient[@id=$ref]/@x1"/>
+          <xsl:text>,</xsl:text>
+          <xsl:value-of select="//linearGradient[@id=$ref]/@y1"/>
+        </xsl:attribute>
+        <xsl:attribute name="EndPoint">
+          <xsl:value-of select="//linearGradient[@id=$ref]/@x2"/>
+          <xsl:text>,</xsl:text>
+          <xsl:value-of select="//linearGradient[@id=$ref]/@y2"/>
+        </xsl:attribute>
+        <xsl:for-each select="//linearGradient[@id=$ref]/stop">
+          <GradientStop>
+            <xsl:attribute name="Color">
+              <xsl:call-template name="GetColor">
+                <xsl:with-param name="color"><xsl:value-of select="@stop-color"/></xsl:with-param>
+                <xsl:with-param name="opacity"><xsl:value-of select="@stop-opacity"/></xsl:with-param>
+              </xsl:call-template>
             </xsl:attribute>
-          </xsl:if>
-        </GradientStop>
-      </xsl:for-each>
-    </LinearGradientBrush>
+            <xsl:if test="@offset">
+              <xsl:attribute name="Offset">
+                <xsl:value-of select="@offset" />
+              </xsl:attribute>
+            </xsl:if>
+          </GradientStop>
+        </xsl:for-each>
+      </LinearGradientBrush>
+    </xsl:if>
+    <!-- Radial -->
+    <xsl:if test="//radialGradient[@id=$ref]">
+      <RadialGradientBrush>
+        <!-- TODO: uncomment after adding support for <RadialGradientBrush.RelativeTransform> -->
+        <!-- <xsl:attribute name="MappingMode">
+          <xsl:choose>
+            <xsl:when test="//radialGradient[@id=$ref]/@gradientUnits = 'userSpaceOnUse' ">Absolute</xsl:when>
+            <xsl:otherwise>RelativeToBoundingBox</xsl:otherwise>
+          </xsl:choose>
+        </xsl:attribute> -->
+        <xsl:for-each select="//radialGradient[@id=$ref]/stop">
+          <GradientStop>
+            <xsl:attribute name="Color">
+              <xsl:call-template name="GetColor">
+                <xsl:with-param name="color"><xsl:value-of select="@stop-color"/></xsl:with-param>
+                <xsl:with-param name="opacity"><xsl:value-of select="@stop-opacity"/></xsl:with-param>
+              </xsl:call-template>
+            </xsl:attribute>
+            <xsl:if test="@offset">
+              <xsl:attribute name="Offset">
+                <xsl:value-of select="@offset" />
+              </xsl:attribute>
+            </xsl:if>
+          </GradientStop>
+        </xsl:for-each>
+      </RadialGradientBrush>
+    </xsl:if>
   </xsl:template>
   
   <!-- Main template -->

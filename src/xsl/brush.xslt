@@ -63,9 +63,10 @@
     )"/>
   </xsl:template>
   
-  <!-- Draw linear gradient -->
+  <!-- Draw gradient -->
   <xsl:template name="GetGradient">
     <xsl:param name="ref" />
+    <!-- Linear -->
     <xsl:if test="//linearGradient[@id=$ref]">
       <LinearGradientBrush>
         <xsl:attribute name="MappingMode">
@@ -100,6 +101,33 @@
           </GradientStop>
         </xsl:for-each>
       </LinearGradientBrush>
+    </xsl:if>
+    <!-- Radial -->
+    <xsl:if test="//radialGradient[@id=$ref]">
+      <RadialGradientBrush>
+        <!-- TODO: uncomment after adding support for <RadialGradientBrush.RelativeTransform> -->
+        <!-- <xsl:attribute name="MappingMode">
+          <xsl:choose>
+            <xsl:when test="//radialGradient[@id=$ref]/@gradientUnits = 'userSpaceOnUse' ">Absolute</xsl:when>
+            <xsl:otherwise>RelativeToBoundingBox</xsl:otherwise>
+          </xsl:choose>
+        </xsl:attribute> -->
+        <xsl:for-each select="//radialGradient[@id=$ref]/stop">
+          <GradientStop>
+            <xsl:attribute name="Color">
+              <xsl:call-template name="GetColor">
+                <xsl:with-param name="color"><xsl:value-of select="@stop-color"/></xsl:with-param>
+                <xsl:with-param name="opacity"><xsl:value-of select="@stop-opacity"/></xsl:with-param>
+              </xsl:call-template>
+            </xsl:attribute>
+            <xsl:if test="@offset">
+              <xsl:attribute name="Offset">
+                <xsl:value-of select="@offset" />
+              </xsl:attribute>
+            </xsl:if>
+          </GradientStop>
+        </xsl:for-each>
+      </RadialGradientBrush>
     </xsl:if>
   </xsl:template>
 

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" >
   <g id="plus / Icon-hello">
-    <path id="rectangle_0" d="M0 0H24V24H0V0Z" stroke="url(#paint0_linear_1803:21579)" fill="black" fill-opacity="0.1"/>
+    <path id="rectangle_0" d="M0 0H24V24H0V0Z" stroke="url(#paint0_radial_244_4382)" stroke-width="4" fill="black" fill-opacity="0.1"/>
     <path id="rectangle_1" d="M0 0H24V24H0V0Z" stroke="#FF00FF" stroke-linejoin="round" stroke-width="2" stroke-linecap="round" fill="white" fill-opacity="0.5"/>
-    <path id="rectangle_2" d="M0 0H24V24H0V0Z" fill="url(#paint0_linear_1803:21579)"/>
+    <path id="rectangle_2" d="M0 0H24V24H0V0Z" fill="url(#paint0_linear_1803:21579)" />
     <path id="plus" d="M11 13V20H13V13H20V11H13V4H11V11H4V13H11Z" fill="#0077CC"/>
   </g>
   <defs>
@@ -11,5 +11,9 @@
       <stop stop-color="#0015FF"/>
       <stop offset="1" stop-color="#0000FF" stop-opacity="0"/>
     </linearGradient>
+    <radialGradient id="paint0_radial_244_4382" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(12 12) rotate(90) scale(12)">
+        <stop stop-color="#C4C4C4"/>
+        <stop offset="1" stop-color="#C4C4C4" stop-opacity="0"/>
+    </radialGradient>
   </defs>
 </svg>
