@@ -22,6 +22,7 @@ https://github.com/thomas-lowry/figsvelte
 - [Path](https://docs.microsoft.com/en-us/uwp/api/windows.ui.xaml.shapes.path)
 - [Brush](https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.geometrydrawing.brush)
 - [LinearGradientBrush](https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.lineargradientbrush)
+- [RadialGradientBrush](https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.radialgradientbrush) without RelativeTransform
 - [Pen](https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.geometrydrawing.pen)
 - [Transparent color](https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.color.a)
 
