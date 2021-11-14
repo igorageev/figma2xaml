@@ -24,6 +24,7 @@
     import htmlHighlight from 'highlight.js/lib/languages/xml';
     hljs.registerLanguage('xml', htmlHighlight);
 
+    // Code conversion rules store
     let rulesStore = [
         { 
             id: 0,
@@ -57,6 +58,7 @@
         }
     ];
 
+    // Code filtering rules store
     let filterStore = [
         { 
             label: 'Brush', 
@@ -126,7 +128,6 @@
         resultView = '',
         disabled = true,
         resultHolder,
-        isBrush = true,
         preResult,
         currentMode = {id: 1},
         pastMode = currentMode.id,
@@ -278,8 +279,8 @@
         if (tweakMode) {
             tweakMode = false;
             saveChanges();
-            showСode();
         }
+        showСode();
     }
 
     /**
@@ -361,30 +362,12 @@
             <Label>Changes will also be lost <br>after closing the plugin</Label>
         </div>
     {:else if (filterMode && currentMode.id != 0)}
-        <div >
-            <Switch 
-                on:change={showСode} 
-                value="value" 
-                bind:checked={filterStore[0].show}>
-                {filterStore[0].label}
+        {#each filterStore as filter}
+            <Switch
+                bind:checked={filter.show}>
+                {filter.label}
             </Switch>
-        </div>
-        <div >
-            <Switch 
-                on:change={showСode} 
-                value="value" 
-                bind:checked={filterStore[1].show}>
-                {filterStore[1].label}
-            </Switch>
-        </div>
-        <div >
-            <Switch 
-                on:change={showСode} 
-                value="value" 
-                bind:checked={filterStore[2].show}>
-                {filterStore[2].label}
-            </Switch>
-        </div>
+        {/each}
         <Label>Disabled items will not appear in xaml</Label>
     {:else}
 
@@ -451,7 +434,6 @@
     .hide {
         display: none;
     }
-
     .message {
         height: 126px;
         margin: 0 0 15px;
@@ -494,6 +476,5 @@
     }
     textarea:focus {
         border-color: var(--blue);
-    }
-
+}
 </style>

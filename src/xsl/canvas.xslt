@@ -43,7 +43,7 @@
       </xsl:when>
       <xsl:otherwise>
         <xsl:call-template name="NameToHex">
-            <xsl:with-param name="color"><xsl:value-of select="$color"/></xsl:with-param>
+          <xsl:with-param name="color"><xsl:value-of select="$color"/></xsl:with-param>
         </xsl:call-template>
       </xsl:otherwise>
     </xsl:choose>
@@ -153,7 +153,7 @@
             <xsl:attribute name="Data">
               <xsl:value-of select="@d"/>
             </xsl:attribute>
-            <!-- Color -->
+            <!-- Fill color -->
             <xsl:if test="@fill">
               <xsl:choose>
                 <!-- Gradient -->

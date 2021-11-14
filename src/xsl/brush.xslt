@@ -150,7 +150,7 @@
                   <xsl:attribute name="Geometry">
                     <xsl:value-of select="@d"/>
                   </xsl:attribute>
-                  <!-- Color -->
+                  <!-- Shape color -->
                   <xsl:if test="@fill">
                     <xsl:choose>
                       <!-- Gradient -->
@@ -203,7 +203,7 @@
                             </xsl:call-template>
                           </xsl:attribute>
                         </xsl:if>
-                        <!-- Color -->
+                        <!-- Pen color -->
                         <xsl:choose>
                           <!-- Gradient -->
                           <xsl:when test="starts-with(@stroke, 'url(#')">
