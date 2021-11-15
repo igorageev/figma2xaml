@@ -9,4 +9,7 @@
         <path d="M43 43L21 21" stroke="white" stroke-width="8"/>
         <path d="M21 43L43 21" stroke="white" stroke-width="8"/>
     </symbol>
+    <symbol id="question" viewBox="0 0 8 14">
+        <path d="M5 13H4v1h1v-1zM4 1C2.343 1 1 2.343 1 4H0c0-2.21 1.79-4 4-4 2.21 0 4 1.79 4 4 0 1.268-.59 2.398-1.51 3.13l-.083.065C5.553 7.833 5 8.852 5 10H4c0-1.424.662-2.694 1.694-3.518l.083-.064C6.519 5.87 7 4.992 7 4c0-1.657-1.343-3-3-3z" fill-rule="nonzero" fill-opacity="1" fill="#fff" stroke="none"></path>
+    </symbol>
 </svg>

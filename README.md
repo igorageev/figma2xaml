@@ -14,7 +14,7 @@ https://github.com/thomas-lowry/figsvelte
 1. Select the required code format from the dropdown menu
 2. Select only one layer with frame, group, component or instance
 3. Press `Get code`  and then `Copy` button
-4. Create from it a Resource Dictionary in Visual Studio
+4. Use the code in Visual Studio for example to create Resource Dictionary
 
 ## Supported features:
 

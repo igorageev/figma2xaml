@@ -17,7 +17,7 @@
     import { setClipboard, selectText } from './utils/clipboard';
 
     // import some components
-    import { Button, Label, SelectMenu, Switch, Icon, IconAdjust, IconListDetailed, IconButton, Textarea } from "figma-plugin-ds-svelte";
+    import { Button, Label, SelectMenu, Switch, Icon, IconAdjust, IconLibrary, IconListDetailed, IconButton, Textarea } from "figma-plugin-ds-svelte";
 
     // import and register library for highlighting code
     import hljs from 'highlight.js/lib/core';
@@ -158,7 +158,6 @@
             nameSelected = 'of ' + received.id;
         }
         received = received.svg.replace('xmlns="http://www.w3.org/2000/svg"', '');
-        // alert(received);
         newSource = received;
     };
 
@@ -314,6 +313,10 @@
         }
     }
 
+    function help() {
+        window.open('https://github.com/igorageev/figma2xaml/wiki', '_blank');
+    }
+
     /**
      * Displaying the source bypassing the menu
      */
@@ -405,14 +408,18 @@
         {/if}
 
         <!-- Footer -->
-        <div class="flex p-xxsmall">
-            <Button on:click={getCode} bind:disabled>Get Code</Button>
-            <Button on:click={copy} variant="secondary" class="ml-xxsmall btn">Copy</Button>
+        <div class="flex row p-xxsmall">
+                <Button on:click={getCode} bind:disabled>Get Code</Button>
+                <Button on:click={copy} variant="secondary" class="ml-xxsmall btn">Copy</Button>
         </div>
     {/if}
 
 
 </div>
+<div class="help">
+    <Button on:click={help} variant="tertiary" class="help">Reference</Button>
+</div>
+
 {@html SvgName}
 
 <style>
@@ -476,5 +483,11 @@
     }
     textarea:focus {
         border-color: var(--blue);
-}
+    }
+    .help {
+        position: fixed;
+        bottom: 20px;
+        right: 16px;
+    }
+
 </style>
