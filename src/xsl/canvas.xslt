@@ -8,7 +8,6 @@
 -->
 
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <!-- Here is the magic: set indent to format the output -->
   <xsl:output omit-xml-declaration="yes" indent="yes"/>
   
   <!-- Hexadecimal color codes for transparency -->
@@ -32,11 +31,9 @@
     <xsl:param name="color" />
     <xsl:param name="opacity" />
     <xsl:text>#</xsl:text>
-    <!-- Get transparency -->
     <xsl:if test="$opacity">
       <xsl:value-of select="substring($hexTransparency, $opacity*200+1, 2)"/>
     </xsl:if>
-    <!-- Get color -->
     <xsl:choose>
       <xsl:when test="starts-with($color, '#')">
         <xsl:value-of select="substring($color, 2)"/>
@@ -62,11 +59,10 @@
       substring($text,2,string-length($text)-1)
     )"/>
   </xsl:template>
-  
+
   <!-- Draw gradient -->
   <xsl:template name="GetGradient">
     <xsl:param name="ref" />
-    <!-- Linear  -->
     <xsl:if test="//linearGradient[@id=$ref]">
       <LinearGradientBrush>
         <xsl:attribute name="MappingMode">
@@ -102,16 +98,8 @@
         </xsl:for-each>
       </LinearGradientBrush>
     </xsl:if>
-    <!-- Radial -->
     <xsl:if test="//radialGradient[@id=$ref]">
       <RadialGradientBrush>
-        <!-- TODO: uncomment after adding support for <RadialGradientBrush.RelativeTransform> -->
-        <!-- <xsl:attribute name="MappingMode">
-          <xsl:choose>
-            <xsl:when test="//radialGradient[@id=$ref]/@gradientUnits = 'userSpaceOnUse' ">Absolute</xsl:when>
-            <xsl:otherwise>RelativeToBoundingBox</xsl:otherwise>
-          </xsl:choose>
-        </xsl:attribute> -->
         <xsl:for-each select="//radialGradient[@id=$ref]/stop">
           <GradientStop>
             <xsl:attribute name="Color">
@@ -131,7 +119,97 @@
     </xsl:if>
   </xsl:template>
 
-  <!-- Main template -->
+  <!-- Solid fill -->
+  <xsl:template name="GetFill">
+    <xsl:if test="./@fill and not(starts-with(./@fill, 'url(#'))">
+      <xsl:attribute name="Fill">
+        <xsl:call-template name="GetColor">
+          <xsl:with-param name="color"><xsl:value-of select="./@fill"/></xsl:with-param>
+          <xsl:with-param name="opacity"><xsl:value-of select="./@fill-opacity"/></xsl:with-param>
+        </xsl:call-template>
+      </xsl:attribute>
+    </xsl:if>
+  </xsl:template>
+
+  <!-- Gradient fill -->
+  <xsl:template name="GetGradientFill">
+    <xsl:if test="starts-with(./@fill, 'url(#')">
+      <Path.Fill>
+        <xsl:call-template name="GetGradient">
+          <xsl:with-param name="ref"><xsl:value-of select="substring-before(substring-after(./@fill, 'url(#'), ')')"/></xsl:with-param>
+        </xsl:call-template>
+      </Path.Fill>
+    </xsl:if>
+  </xsl:template>
+
+  <!-- Stroke width -->
+  <xsl:template name="GetStrokeProperties">
+    <xsl:if test="./@stroke-width">
+      <xsl:attribute name="StrokeThickness">
+        <xsl:value-of select="./@stroke-width"/>
+      </xsl:attribute>
+    </xsl:if>
+    <xsl:if test="./@stroke-linecap">
+      <xsl:attribute name="StartLineCap">
+        <xsl:call-template name="CapitalizeFirst">
+          <xsl:with-param name="text"><xsl:value-of select="./@stroke-linecap"/></xsl:with-param>
+        </xsl:call-template>
+      </xsl:attribute>
+      <xsl:attribute name="EndLineCap">
+        <xsl:call-template name="CapitalizeFirst">
+          <xsl:with-param name="text"><xsl:value-of select="./@stroke-linecap"/></xsl:with-param>
+        </xsl:call-template>
+      </xsl:attribute>
+    </xsl:if>
+    <xsl:if test="./@stroke-linejoin">
+      <xsl:attribute name="LineJoin">
+        <xsl:call-template name="CapitalizeFirst">
+          <xsl:with-param name="text"><xsl:value-of select="./@stroke-linejoin"/></xsl:with-param>
+        </xsl:call-template>
+      </xsl:attribute>
+    </xsl:if>
+  </xsl:template>
+
+  <!-- Stroke color -->
+  <xsl:template name="GetStroke">
+    <xsl:if test="@stroke and not(starts-with(./@stroke, 'url(#'))">
+      <xsl:attribute name="Stroke">
+        <xsl:call-template name="GetColor">
+          <xsl:with-param name="color"><xsl:value-of select="./@stroke"/></xsl:with-param>
+          <xsl:with-param name="opacity"><xsl:value-of select="./@stroke-opacity"/></xsl:with-param>
+        </xsl:call-template>
+      </xsl:attribute>
+    </xsl:if>
+  </xsl:template>
+
+  <!-- Stroke gradient -->
+  <xsl:template name="GetGradientStroke">
+    <xsl:if test="starts-with(./@stroke, 'url(#')">
+      <Path.Stroke>
+        <xsl:call-template name="GetGradient">
+          <xsl:with-param name="ref"><xsl:value-of select="substring-before(substring-after(./@stroke, 'url(#'), ')')"/></xsl:with-param>
+        </xsl:call-template>
+      </Path.Stroke>
+    </xsl:if>
+  </xsl:template>
+
+  <!-- RotateTransform: rotates an object around a specified point -->
+  <xsl:template name="RotateIt">
+    <xsl:param name="param" />
+    <RotateTransform>
+      <xsl:attribute name="Angle">
+        <xsl:value-of select="substring-before( substring-after($param, 'rotate('), ' ')" />
+      </xsl:attribute>
+      <xsl:attribute name="CenterX">
+        <xsl:value-of select="substring-before( substring-after($param, ' '), ' ')" />
+      </xsl:attribute>
+      <xsl:attribute name="CenterY">
+        <xsl:value-of select="substring-before( substring-after( substring-after($param, ' '), ' '), ')')" />
+      </xsl:attribute>
+    </RotateTransform>
+  </xsl:template>
+
+  <!-- Main container -->
   <xsl:template match="/">
     <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"> 
       <Canvas>
@@ -146,67 +224,109 @@
         <xsl:attribute name="width">
           <xsl:value-of select="svg/@width"/>
         </xsl:attribute>
-        <!-- Looping through all shapes -->
-        <xsl:for-each select="//path">
-          <Path>
-            <!-- Get geometry -->
-            <xsl:attribute name="Data">
-              <xsl:value-of select="@d"/>
-            </xsl:attribute>
-            <!-- Fill color -->
-            <xsl:if test="@fill">
-              <xsl:choose>
-                <!-- Gradient -->
-                <xsl:when test="starts-with(@fill, 'url(#')">
-                  <Path.Fill>
-                    <xsl:call-template name="GetGradient">
-                      <xsl:with-param name="ref"><xsl:value-of select="substring-before(substring-after(@fill, 'url(#'), ')')"/></xsl:with-param>
-                    </xsl:call-template>
-                  </Path.Fill>
-                </xsl:when>
-                <!-- Solid -->
-                <xsl:otherwise>
-                  <xsl:attribute name="Fill">
-                    <xsl:call-template name="GetColor">
-                      <xsl:with-param name="color"><xsl:value-of select="@fill"/></xsl:with-param>
-                      <xsl:with-param name="opacity"><xsl:value-of select="@fill-opacity"/></xsl:with-param>
-                    </xsl:call-template>
-                  </xsl:attribute>
-                </xsl:otherwise>
-              </xsl:choose>
-            </xsl:if>
-            <!-- Width of the stroke -->
-            <xsl:if test="@stroke-width">
-              <xsl:attribute name="StrokeThickness">
-                <xsl:value-of select="@stroke-width"/>
-              </xsl:attribute>
-            </xsl:if>
-            <!-- Stroke color-->
-            <xsl:if test="@stroke">
-              <xsl:choose>
-                <!-- Gradient -->
-                <xsl:when test="starts-with(@stroke, 'url(#')">
-                  <xsl:variable name="ref" select="substring-before(substring-after(@stroke, 'url(#'), ')')" />
-                  <Path.Stroke>
-                    <xsl:call-template name="GetGradient">
-                      <xsl:with-param name="ref"><xsl:value-of select="substring-before(substring-after(@stroke, 'url(#'), ')')"/></xsl:with-param>
-                    </xsl:call-template>
-                  </Path.Stroke>
-                </xsl:when>
-                <!-- Solid -->
-                <xsl:otherwise>
-                  <xsl:attribute name="Stroke">
-                    <xsl:call-template name="GetColor">
-                      <xsl:with-param name="color"><xsl:value-of select="@stroke"/></xsl:with-param>
-                      <xsl:with-param name="opacity"><xsl:value-of select="@stroke-opacity"/></xsl:with-param>
-                    </xsl:call-template>
-                  </xsl:attribute>
-                </xsl:otherwise>
-              </xsl:choose>
-            </xsl:if>
-          </Path>
-        </xsl:for-each>
+        <xsl:apply-templates />
       </Canvas>
     </ResourceDictionary>
   </xsl:template>
+
+  <!-- Path: draws a series of connected lines and curves -->
+  <xsl:template match="path">
+    <Path>
+      <xsl:call-template name="GetStrokeProperties" />
+      <xsl:call-template name="GetStroke" />
+      <xsl:call-template name="GetFill" />
+      <xsl:attribute name="Data">
+        <xsl:value-of select="@d"/>
+      </xsl:attribute>
+      <xsl:call-template name="GetGradientFill" />
+      <xsl:call-template name="GetGradientStroke" />
+    </Path>
+  </xsl:template>
+
+  <!-- EllipseGeometry: represents the geometry of a circle or ellipse -->
+  <xsl:template match="ellipse|circle">
+    <Path>
+      <xsl:call-template name="GetStrokeProperties" />
+      <xsl:call-template name="GetStroke" />
+      <xsl:call-template name="GetFill" />
+      <xsl:call-template name="GetGradientFill" />
+      <xsl:call-template name="GetGradientStroke" />
+      <Path.Data>
+        <EllipseGeometry>
+          <xsl:attribute name="Center">
+            <xsl:value-of select="@cx"/>,<xsl:value-of select="@cy"/>
+          </xsl:attribute>
+          <xsl:if test="@r">
+            <xsl:attribute name="RadiusX">
+              <xsl:value-of select="@r"/>
+            </xsl:attribute>
+            <xsl:attribute name="RadiusY">
+              <xsl:value-of select="@r"/>
+            </xsl:attribute>
+          </xsl:if>
+          <xsl:if test="@rx">
+            <xsl:attribute name="RadiusX">
+              <xsl:value-of select="@rx"/>
+            </xsl:attribute>
+            <xsl:attribute name="RadiusY">
+              <xsl:value-of select="@ry"/>
+            </xsl:attribute>
+          </xsl:if>
+          <xsl:if test="starts-with(@transform, 'rotate(')">
+            <EllipseGeometry.Transform>
+              <xsl:call-template name="RotateIt">
+                <xsl:with-param name="param"><xsl:value-of select="@transform"/></xsl:with-param>
+              </xsl:call-template>
+            </EllipseGeometry.Transform>
+          </xsl:if>
+        </EllipseGeometry>
+      </Path.Data>
+    </Path>
+  </xsl:template>
+
+  <!-- RectangleGeometry: describes a two-dimensional rectangle -->
+  <xsl:template match="rect">
+    <xsl:variable name="x">
+      <xsl:choose>
+        <xsl:when test="@x"><xsl:value-of select="@x"/></xsl:when>
+        <xsl:otherwise>0</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="y">
+      <xsl:choose>
+        <xsl:when test="@y"><xsl:value-of select="@y"/></xsl:when>
+        <xsl:otherwise>0</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <Path>
+      <xsl:call-template name="GetStrokeProperties" />
+      <xsl:call-template name="GetStroke" />
+      <xsl:call-template name="GetFill" />
+      <xsl:call-template name="GetGradientFill" />
+      <xsl:call-template name="GetGradientStroke" />
+      <Path.Data>
+        <RectangleGeometry>
+          <xsl:attribute name="Rect">
+            <xsl:value-of select="$x"/>,<xsl:value-of select="$y"/>,<xsl:value-of select="@width"/>,<xsl:value-of select="@height"/>
+          </xsl:attribute>
+          <xsl:if test="@rx">
+            <xsl:attribute name="RadiusX">
+              <xsl:value-of select="@rx"/>
+            </xsl:attribute>
+            <xsl:attribute name="RadiusY">
+              <xsl:value-of select="@rx"/>
+            </xsl:attribute>
+          </xsl:if>
+          <xsl:if test="starts-with(@transform, 'rotate(')">
+            <RectangleGeometry.Transform>
+              <xsl:call-template name="RotateIt">
+                <xsl:with-param name="param"><xsl:value-of select="@transform"/></xsl:with-param>
+              </xsl:call-template>
+            </RectangleGeometry.Transform>
+          </xsl:if>
+        </RectangleGeometry>
+      </Path.Data>
+    </Path>
+  </xsl:template>
+
 </xsl:stylesheet>

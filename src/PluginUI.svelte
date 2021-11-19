@@ -13,6 +13,7 @@
     import initCanvasRules from './xsl/canvas.xslt';
 
     // import utils
+    import beautify from "xml-beautifier";
     import { transformXML } from './utils/xslt';
     import { setClipboard, selectText } from './utils/clipboard';
 
@@ -86,8 +87,8 @@
                 },
                 {
                     rules: [4],
-                    find: />\n.+?<Path\.(.|\n)*?<\/Path>/g,
-                    replace: '/>'
+                    find: /<Path\.(Fill|Stroke)>(.|\n)*?<\/Path\.(Fill|Stroke)>/g,
+                    replace: ''
                 }
             ]
         },
@@ -135,7 +136,8 @@
         filterMode = false,
         isEmpty = true,
         error = 0, // 0: no error; 1: svg problem; 2: xslt problem
-        errorMessage;
+        errorMessage,
+        supportedItems = ['<path','<rect', '<circle', '<ellipse'];
 
     updateMenu(0);
 
@@ -177,11 +179,15 @@
      * Show formated code
      */
     function showСode() {
-        if (sourceHolder.indexOf('<path ') == -1 && currentMode.id != 0) {
-            error = 1;
+        error = 1;
+        for (const item of supportedItems) {
+            if (sourceHolder.indexOf(item) > -1) {
+                error = 0;
+                break;
+            }
+        }
+        if (error == 1 && currentMode.id != 0) {
             errorMessage = 'No supported items found';
-        } else {
-            error = 0;
         }
 
         if (tweakMode) {
@@ -220,6 +226,7 @@
         }
 
         // Highlight result
+        preResult = beautify(preResult, '  ');
         preResult = getHighlightedCode(preResult);
         resultView = preResult;
     }

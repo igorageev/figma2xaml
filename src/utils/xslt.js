@@ -24,9 +24,11 @@ function transformXML(xmlText, xsltText) {
     // Transform it
     try {
         var transformedXml = xslt.transformToDocument(xml);
+        console.log(transformedXml);
         // Apply the transformed document if it was successful
         return new XMLSerializer().serializeToString(transformedXml);
     } catch (e) {
+        console.log(e);
         return "Problem with XSLT rules";
     }
 }

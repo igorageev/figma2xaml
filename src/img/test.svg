@@ -1,19 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" >
-  <g id="plus / Icon-hello">
-    <path id="rectangle_0" d="M0 0H24V24H0V0Z" stroke="url(#paint0_radial_244_4382)" stroke-width="4" fill="black" fill-opacity="0.1"/>
-    <path id="rectangle_1" d="M0 0H24V24H0V0Z" stroke="#FF00FF" stroke-linejoin="round" stroke-width="2" stroke-linecap="round" fill="white" fill-opacity="0.5"/>
-    <path id="rectangle_2" d="M0 0H24V24H0V0Z" fill="url(#paint0_linear_1803:21579)" />
-    <path id="plus" d="M11 13V20H13V13H20V11H13V4H11V11H4V13H11Z" fill="#0077CC"/>
-  </g>
-  <defs>
-    <linearGradient id="paint0_linear_1803:21579" x1="12" y1="0" x2="12" y2="24" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#0015FF"/>
-      <stop offset="1" stop-color="#0000FF" stop-opacity="0"/>
+<svg width="304" height="140" viewBox="0 0 304 140" fill="none" >
+    <g id="olympics">
+    <circle id="Ellipse 1" cx="48" cy="48" r="44" fill="url(#paint0_linear_48_72)" stroke="url(#paint0_linear_48_72)" stroke-width="8"/>
+    <circle id="Ellipse 4" cx="152" cy="48" r="44" stroke="white" stroke-width="8"/>
+    <circle id="Ellipse 3" cx="256" cy="48" r="44" fill="#FF00FF" stroke="white" stroke-width="8"/>
+    <rect id="Rectangle 1" x="56" y="48" width="88" height="88" rx="44" stroke="white" stroke-width="8"/>
+    <path id="Rectangle 2" d="M160 92C160 67.6995 179.699 48 204 48C228.301 48 248 67.6995 248 92C248 116.301 228.301 136 204 136C179.699 136 160 116.301 160 92Z" fill="url(#paint0_linear_48_72)" stroke="white" stroke-width="8"/>
+    </g>
+    <defs>
+    <linearGradient id="paint0_linear_48_72" x1="48" y1="4" x2="48" y2="92" gradientUnits="userSpaceOnUse">
+    <stop stop-color="#C4C4C4"/>
+    <stop offset="1" stop-color="#C4C4C4" stop-opacity="0"/>
     </linearGradient>
-    <radialGradient id="paint0_radial_244_4382" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(12 12) rotate(90) scale(12)">
-        <stop stop-color="#C4C4C4"/>
-        <stop offset="1" stop-color="#C4C4C4" stop-opacity="0"/>
-    </radialGradient>
-  </defs>
-</svg>
+    </defs>
+    </svg>
