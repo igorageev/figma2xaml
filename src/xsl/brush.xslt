@@ -144,7 +144,7 @@
     <xsl:if test="starts-with(./@fill, 'url(#')">
       <xsl:element name="{$container}">
         <xsl:call-template name="GetGradient">
-          <xsl:with-param name="ref"><xsl:value-of select="substring-before(substring-after(./@fill, 'url(#'), ')')"/></xsl:with-param>
+          <xsl:with-param name="ref"><xsl:value-of select="substring-before( substring-after( ./@fill, 'url(#' ), ')' )"/></xsl:with-param>
         </xsl:call-template>
       </xsl:element>
     </xsl:if>
@@ -191,7 +191,7 @@
             <xsl:when test="starts-with(./@stroke, 'url(#')">
               <Pen.Brush>
                 <xsl:call-template name="GetGradient">
-                  <xsl:with-param name="ref"><xsl:value-of select="substring-before(substring-after(./@stroke, 'url(#'), ')')"/></xsl:with-param>
+                  <xsl:with-param name="ref"><xsl:value-of select="substring-before( substring-after( ./@stroke, 'url(#' ), ')' )"/></xsl:with-param>
                 </xsl:call-template>
               </Pen.Brush>
             </xsl:when>
@@ -231,7 +231,7 @@
       <DrawingBrush>
         <!-- Get id of resource -->
         <xsl:attribute name="x:Key">
-          <xsl:value-of select="translate(svg/node()/@id, '-/. ', '__')"/>
+          <xsl:value-of select="translate( svg/node()/@id, '-/. ', '__' )"/>
         </xsl:attribute>
         <xsl:attribute name="Stretch">None</xsl:attribute>
         <DrawingBrush.Drawing>
@@ -321,7 +321,7 @@
       </xsl:if>
       <xsl:call-template name="GetNodeBrush" />
       <xsl:call-template name="GetStroke" />
-      <xsl:if test="starts-with(@transform, 'rotate(')">
+      <xsl:if test="starts-with( @transform, 'rotate(' )">
         <RectangleGeometry.Transform>
           <xsl:call-template name="RotateIt">
             <xsl:with-param name="param"><xsl:value-of select="@transform"/></xsl:with-param>

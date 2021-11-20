@@ -32,11 +32,11 @@
     <xsl:param name="opacity" />
     <xsl:text>#</xsl:text>
     <xsl:if test="$opacity">
-      <xsl:value-of select="substring($hexTransparency, $opacity*200+1, 2)"/>
+      <xsl:value-of select="substring( $hexTransparency, $opacity*200+1, 2 )"/>
     </xsl:if>
     <xsl:choose>
-      <xsl:when test="starts-with($color, '#')">
-        <xsl:value-of select="substring($color, 2)"/>
+      <xsl:when test="starts-with( $color, '#' )">
+        <xsl:value-of select="substring( $color, 2 )"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:call-template name="NameToHex">
@@ -56,7 +56,7 @@
         'abcdefghijklmnopqrstuvwxyz',
         'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
       ),
-      substring($text,2,string-length($text)-1)
+      substring( $text, 2, string-length($text)-1 )
     )"/>
   </xsl:template>
 
@@ -121,7 +121,7 @@
 
   <!-- Solid fill -->
   <xsl:template name="GetFill">
-    <xsl:if test="./@fill and not(starts-with(./@fill, 'url(#'))">
+    <xsl:if test="./@fill and not( starts-with( ./@fill, 'url(#' ) )">
       <xsl:attribute name="Fill">
         <xsl:call-template name="GetColor">
           <xsl:with-param name="color"><xsl:value-of select="./@fill"/></xsl:with-param>
@@ -133,10 +133,10 @@
 
   <!-- Gradient fill -->
   <xsl:template name="GetGradientFill">
-    <xsl:if test="starts-with(./@fill, 'url(#')">
+    <xsl:if test="starts-with( ./@fill, 'url(#' )">
       <Path.Fill>
         <xsl:call-template name="GetGradient">
-          <xsl:with-param name="ref"><xsl:value-of select="substring-before(substring-after(./@fill, 'url(#'), ')')"/></xsl:with-param>
+          <xsl:with-param name="ref"><xsl:value-of select="substring-before( substring-after( ./@fill, 'url(#' ), ')' )"/></xsl:with-param>
         </xsl:call-template>
       </Path.Fill>
     </xsl:if>
@@ -172,7 +172,7 @@
 
   <!-- Stroke color -->
   <xsl:template name="GetStroke">
-    <xsl:if test="@stroke and not(starts-with(./@stroke, 'url(#'))">
+    <xsl:if test="@stroke and not( starts-with( ./@stroke, 'url(#' ) )">
       <xsl:attribute name="Stroke">
         <xsl:call-template name="GetColor">
           <xsl:with-param name="color"><xsl:value-of select="./@stroke"/></xsl:with-param>
@@ -184,10 +184,10 @@
 
   <!-- Stroke gradient -->
   <xsl:template name="GetGradientStroke">
-    <xsl:if test="starts-with(./@stroke, 'url(#')">
+    <xsl:if test="starts-with( ./@stroke, 'url(#' )">
       <Path.Stroke>
         <xsl:call-template name="GetGradient">
-          <xsl:with-param name="ref"><xsl:value-of select="substring-before(substring-after(./@stroke, 'url(#'), ')')"/></xsl:with-param>
+          <xsl:with-param name="ref"><xsl:value-of select="substring-before( substring-after( ./@stroke, 'url(#' ), ')' )"/></xsl:with-param>
         </xsl:call-template>
       </Path.Stroke>
     </xsl:if>
@@ -272,7 +272,7 @@
               <xsl:value-of select="@ry"/>
             </xsl:attribute>
           </xsl:if>
-          <xsl:if test="starts-with(@transform, 'rotate(')">
+          <xsl:if test="starts-with( @transform, 'rotate(' )">
             <EllipseGeometry.Transform>
               <xsl:call-template name="RotateIt">
                 <xsl:with-param name="param"><xsl:value-of select="@transform"/></xsl:with-param>
@@ -317,7 +317,7 @@
               <xsl:value-of select="@rx"/>
             </xsl:attribute>
           </xsl:if>
-          <xsl:if test="starts-with(@transform, 'rotate(')">
+          <xsl:if test="starts-with( @transform, 'rotate(' )">
             <RectangleGeometry.Transform>
               <xsl:call-template name="RotateIt">
                 <xsl:with-param name="param"><xsl:value-of select="@transform"/></xsl:with-param>

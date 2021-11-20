@@ -191,7 +191,7 @@
             <xsl:when test="starts-with(./@stroke, 'url(#')">
               <Pen.Brush>
                 <xsl:call-template name="GetGradient">
-                  <xsl:with-param name="ref"><xsl:value-of select="substring-before(substring-after(./@stroke, 'url(#'), ')')"/></xsl:with-param>
+                  <xsl:with-param name="ref"><xsl:value-of select="substring-before( substring-after( ./@stroke, 'url(#' ), ')' )"/></xsl:with-param>
                 </xsl:call-template>
               </Pen.Brush>
             </xsl:when>
@@ -214,13 +214,13 @@
     <xsl:param name="param" />
     <RotateTransform>
       <xsl:attribute name="Angle">
-        <xsl:value-of select="substring-before( substring-after($param, 'rotate('), ' ')" />
+        <xsl:value-of select="substring-before( substring-after($param, 'rotate('), ' ' )" />
       </xsl:attribute>
       <xsl:attribute name="CenterX">
-        <xsl:value-of select="substring-before( substring-after($param, ' '), ' ')" />
+        <xsl:value-of select="substring-before( substring-after($param, ' '), ' ' )" />
       </xsl:attribute>
       <xsl:attribute name="CenterY">
-        <xsl:value-of select="substring-before( substring-after( substring-after($param, ' '), ' '), ')')" />
+        <xsl:value-of select="substring-before( substring-after( substring-after($param, ' '), ' '), ')' )" />
       </xsl:attribute>
     </RotateTransform>
   </xsl:template>
@@ -231,7 +231,7 @@
       <DrawingImage>
         <!-- Get id of resource -->
         <xsl:attribute name="x:Key">
-          <xsl:value-of select="translate(svg/node()/@id, '-/. ', '__')"/>
+          <xsl:value-of select="translate( svg/node()/@id, '-/. ', '__' )"/>
         </xsl:attribute>
         <xsl:attribute name="Stretch">None</xsl:attribute>
         <DrawingImage.Drawing>
@@ -319,7 +319,7 @@
       </xsl:if>
       <xsl:call-template name="GetNodeBrush" />
       <xsl:call-template name="GetStroke" />
-      <xsl:if test="starts-with(@transform, 'rotate(')">
+      <xsl:if test="starts-with( @transform, 'rotate(' )">
         <RectangleGeometry.Transform>
           <xsl:call-template name="RotateIt">
             <xsl:with-param name="param"><xsl:value-of select="@transform"/></xsl:with-param>
