@@ -1,6 +1,6 @@
 # Figma2xaml
 
-This plugin can help you convert simple vector paths to xaml (eXtensible Application Markup Language). Don't forget to simplify all the elements into vector paths using boolean operations ([see screencast](https://github.com/igorageev/figma2xaml/blob/main/trick.md)) or commands "Flatten" and "Outline Stroke".
+This plugin can help you convert simple vector paths to xaml (eXtensible Application Markup Language).
 
 https://www.figma.com/community/plugin/1029415284789228817/Figma2xaml
 
@@ -18,13 +18,7 @@ https://github.com/thomas-lowry/figsvelte
 
 ## Supported features:
 
-- [GeometryDrawing](https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.geometrydrawing)
-- [Path](https://docs.microsoft.com/en-us/uwp/api/windows.ui.xaml.shapes.path)
-- [Brush](https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.geometrydrawing.brush)
-- [LinearGradientBrush](https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.lineargradientbrush)
-- [RadialGradientBrush](https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.radialgradientbrush) without RelativeTransform
-- [Pen](https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.geometrydrawing.pen)
-- [Transparent color](https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.color.a)
+https://github.com/igorageev/figma2xaml/wiki/Supported-features
 
 ## Installation and contributing
 
