@@ -32,11 +32,11 @@
     <xsl:param name="opacity" />
     <xsl:text>#</xsl:text>
     <xsl:if test="$opacity">
-      <xsl:value-of select="substring($hexTransparency, $opacity*200+1, 2)"/>
+      <xsl:value-of select="substring( $hexTransparency, $opacity*200+1, 2 )"/>
     </xsl:if>
     <xsl:choose>
-      <xsl:when test="starts-with($color, '#')">
-        <xsl:value-of select="substring($color, 2)"/>
+      <xsl:when test="starts-with( $color, '#' )">
+        <xsl:value-of select="substring( $color, 2 )"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:call-template name="NameToHex">
@@ -121,7 +121,7 @@
 
   <!-- Brush as attribute -->
   <xsl:template name="GetAttributeBrush">
-    <xsl:if test="./@fill and not(starts-with(./@fill, 'url(#'))">
+    <xsl:if test="./@fill and not( starts-with( ./@fill, 'url(#' ) )">
       <xsl:attribute name="Brush">
         <xsl:call-template name="GetColor">
           <xsl:with-param name="color"><xsl:value-of select="./@fill"/></xsl:with-param>

@@ -32,11 +32,11 @@
     <xsl:param name="opacity" />
     <xsl:text>#</xsl:text>
     <xsl:if test="$opacity">
-      <xsl:value-of select="substring($hexTransparency, $opacity*200+1, 2)"/>
+      <xsl:value-of select="substring( $hexTransparency, $opacity*200+1, 2 )"/>
     </xsl:if>
     <xsl:choose>
-      <xsl:when test="starts-with($color, '#')">
-        <xsl:value-of select="substring($color, 2)"/>
+      <xsl:when test="starts-with( $color, '#' )">
+        <xsl:value-of select="substring( $color, 2 )"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:call-template name="NameToHex">
@@ -52,11 +52,11 @@
     <xsl:value-of select=
     "concat(
       translate(
-        substring($text, 1, 1),
+        substring( $text, 1, 1 ),
         'abcdefghijklmnopqrstuvwxyz',
         'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
       ),
-      substring($text,2,string-length($text)-1)
+      substring( $text, 2, string-length($text)-1 )
     )"/>
   </xsl:template>
 
@@ -100,6 +100,12 @@
     </xsl:if>
     <xsl:if test="//radialGradient[@id=$ref]">
       <RadialGradientBrush>
+        <xsl:attribute name="MappingMode">
+          <xsl:choose>
+            <xsl:when test="//radialGradient[@id=$ref]/@gradientUnits = 'userSpaceOnUse' ">Absolute</xsl:when>
+            <xsl:otherwise>RelativeToBoundingBox</xsl:otherwise>
+          </xsl:choose>
+        </xsl:attribute>
         <xsl:for-each select="//radialGradient[@id=$ref]/stop">
           <GradientStop>
             <xsl:attribute name="Color">
@@ -121,7 +127,7 @@
 
   <!-- Brush as attribute -->
   <xsl:template name="GetAttributeBrush">
-    <xsl:if test="./@fill and not(starts-with(./@fill, 'url(#'))">
+    <xsl:if test="./@fill and not( starts-with( ./@fill, 'url(#' ) )">
       <xsl:attribute name="Brush">
         <xsl:call-template name="GetColor">
           <xsl:with-param name="color"><xsl:value-of select="./@fill"/></xsl:with-param>
@@ -141,7 +147,7 @@
         <xsl:otherwise>GeometryDrawing.Brush</xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <xsl:if test="starts-with(./@fill, 'url(#')">
+    <xsl:if test="starts-with( ./@fill, 'url(#' )">
       <xsl:element name="{$container}">
         <xsl:call-template name="GetGradient">
           <xsl:with-param name="ref"><xsl:value-of select="substring-before( substring-after( ./@fill, 'url(#' ), ')' )"/></xsl:with-param>

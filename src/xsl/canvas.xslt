@@ -52,7 +52,7 @@
     <xsl:value-of select=
     "concat(
       translate(
-        substring($text, 1, 1),
+        substring( $text, 1, 1 ),
         'abcdefghijklmnopqrstuvwxyz',
         'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
       ),
@@ -67,7 +67,7 @@
       <LinearGradientBrush>
         <xsl:attribute name="MappingMode">
           <xsl:choose>
-            <xsl:when test="//linearGradient[@id=$ref]/@gradientUnits = 'userSpaceOnUse' ">Absolute</xsl:when>
+            <xsl:when test="//linearGradient[@id=$ref]/@gradientUnits = 'userSpaceOnUse'">Absolute</xsl:when>
             <xsl:otherwise>RelativeToBoundingBox</xsl:otherwise>
           </xsl:choose>
         </xsl:attribute>
@@ -100,6 +100,12 @@
     </xsl:if>
     <xsl:if test="//radialGradient[@id=$ref]">
       <RadialGradientBrush>
+        <xsl:attribute name="MappingMode">
+          <xsl:choose>
+            <xsl:when test="//radialGradient[@id=$ref]/@gradientUnits = 'userSpaceOnUse' ">Absolute</xsl:when>
+            <xsl:otherwise>RelativeToBoundingBox</xsl:otherwise>
+          </xsl:choose>
+        </xsl:attribute>
         <xsl:for-each select="//radialGradient[@id=$ref]/stop">
           <GradientStop>
             <xsl:attribute name="Color">
