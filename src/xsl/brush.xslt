@@ -220,13 +220,13 @@
     <xsl:param name="param" />
     <RotateTransform>
       <xsl:attribute name="Angle">
-        <xsl:value-of select="substring-before( substring-after($param, 'rotate('), ' ')" />
+        <xsl:value-of select="substring-before( substring-after( $param, 'rotate('), ' ' )" />
       </xsl:attribute>
       <xsl:attribute name="CenterX">
-        <xsl:value-of select="substring-before( substring-after($param, ' '), ' ')" />
+        <xsl:value-of select="substring-before( substring-after( $param, ' '), ' ' )" />
       </xsl:attribute>
       <xsl:attribute name="CenterY">
-        <xsl:value-of select="substring-before( substring-after( substring-after($param, ' '), ' '), ')')" />
+        <xsl:value-of select="substring-before( substring-after( substring-after( $param, ' ' ), ' ' ), ')' )" />
       </xsl:attribute>
     </RotateTransform>
   </xsl:template>

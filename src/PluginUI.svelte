@@ -29,32 +29,27 @@
     let rulesStore = [
         { 
             id: 0,
-            label: 'Source', 
-            showFilter: false,
+            label: 'Source',
             rules: ''
         },
         { 
             id: 1,
-            label: 'GeometryGroup', 
-            showFilter: false,
+            label: 'GeometryGroup',
             rules: initGroupRules
         },
         {
             id: 2,
             label: 'DrawingBrush', 
-            showFilter: true,
             rules: initBrushRules
         },
         { 
             id: 3,
             label: 'DrawingImage', 
-            showFilter: true,
             rules: initImageRules
         },
         { 
             id: 4,
             label: 'Canvas', 
-            showFilter: true,
             rules: initCanvasRules
         }
     ];
