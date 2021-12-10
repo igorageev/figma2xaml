@@ -106,6 +106,60 @@
             <xsl:otherwise>RelativeToBoundingBox</xsl:otherwise>
           </xsl:choose>
         </xsl:attribute>
+        <xsl:variable name="scale" select="substring-before( substring-after( //radialGradient[@id=$ref]/@gradientTransform, 'scale(' ), ')' )" />
+        <xsl:variable name="rotate" select="substring-before( substring-after( //radialGradient[@id=$ref]/@gradientTransform, 'rotate(' ), ')' )" />
+        <xsl:variable name="translate" select="substring-before( substring-after( //radialGradient[@id=$ref]/@gradientTransform, 'translate(' ), ')' )" />
+        <xsl:if test="$rotate or $translate or $scale">
+          <xsl:attribute name="Center">
+            <xsl:text>0,0</xsl:text>
+          </xsl:attribute>
+          <xsl:attribute name="GradientOrigin">
+            <xsl:text>0,0</xsl:text>
+          </xsl:attribute>
+        </xsl:if>
+        <xsl:if test="$scale">
+          <xsl:choose>
+            <xsl:when test="contains($scale, ' ')">
+              <xsl:attribute name="RadiusX">
+                <xsl:value-of select="substring-before( $scale, ' ' )" />
+              </xsl:attribute>
+              <xsl:attribute name="RadiusY">
+                <xsl:value-of select="substring-after( $scale, ' ' )" />
+              </xsl:attribute>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:attribute name="RadiusX">
+                <xsl:value-of select="$scale" />
+              </xsl:attribute>
+              <xsl:attribute name="RadiusY">
+                <xsl:value-of select="$scale" />
+              </xsl:attribute>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:if>
+        <xsl:if test="$rotate or $translate">
+          <RadialGradientBrush.Transform>
+            <TransformGroup>
+              <xsl:if test="$rotate">
+                <RotateTransform>
+                  <xsl:attribute name="Angle">
+                    <xsl:value-of select="$rotate" />
+                  </xsl:attribute>
+                </RotateTransform>
+              </xsl:if>
+              <xsl:if test="$translate">
+                <TranslateTransform>
+                  <xsl:attribute name="X">
+                    <xsl:value-of select="substring-before( $translate, ' ' )" />
+                  </xsl:attribute>
+                  <xsl:attribute name="Y">
+                    <xsl:value-of select="substring-after( $translate, ' ' )" />
+                  </xsl:attribute>
+                </TranslateTransform>
+              </xsl:if>
+            </TransformGroup>
+          </RadialGradientBrush.Transform>
+        </xsl:if>
         <xsl:for-each select="//radialGradient[@id=$ref]/stop">
           <GradientStop>
             <xsl:attribute name="Color">
@@ -242,6 +296,7 @@
         <xsl:attribute name="Stretch">None</xsl:attribute>
         <DrawingImage.Drawing>
           <DrawingGroup>
+            <xsl:attribute name="ClipGeometry">M0,0 V<xsl:value-of select="svg/@height"/> H<xsl:value-of select="svg/@width"/> V0 H0 Z</xsl:attribute>
             <xsl:apply-templates />
           </DrawingGroup>
         </DrawingImage.Drawing>
