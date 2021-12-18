@@ -1,5 +1,6 @@
 <svg width="304" height="140" viewBox="0 0 304 140" fill="none" >
     <g id="olympics">
+    <line id="Line 3" y1="9.5" x2="111" y2="9.5" stroke="black" stroke-dasharray="2 2"/>
     <circle id="Ellipse 1" cx="48" cy="48" r="44" fill="url(#paint0_linear_48_72)" stroke="url(#paint0_linear_48_72)" stroke-width="8"/>
     <circle id="Ellipse 4" cx="152" cy="48" r="44" stroke="white" stroke-width="8"/>
     <circle id="Ellipse 3" cx="256" cy="48" r="44" fill="#FF00FF" stroke="white" stroke-width="8"/>

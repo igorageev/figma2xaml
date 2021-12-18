@@ -132,7 +132,7 @@
         isEmpty = true,
         error = 0, // 0: no error; 1: svg problem; 2: xslt problem
         errorMessage,
-        supportedItems = ['<path','<rect', '<circle', '<ellipse'];
+        supportedItems = ['<path', '<rect', '<circle', '<ellipse', '<line'];
 
     updateMenu(0);
 

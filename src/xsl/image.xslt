@@ -212,16 +212,8 @@
 
   <!-- Pen: outline of the shape -->
   <xsl:template name="GetStroke">
-    <xsl:variable name="container">
-      <xsl:choose>
-        <xsl:when test="local-name() = 'circle'">EllipseGeometry.Pen</xsl:when>
-        <xsl:when test="local-name() = 'ellipse'">EllipseGeometry.Pen</xsl:when>
-        <xsl:when test="local-name() = 'rect'">RectangleGeometry.Pen</xsl:when>
-        <xsl:otherwise>GeometryDrawing.Pen</xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
     <xsl:if test="./@stroke">
-      <xsl:element name="{$container}">
+      <xsl:element name="GeometryDrawing.Pen">
         <Pen>
           <xsl:if test="./@stroke-width">
             <xsl:attribute name="Thickness">
@@ -245,6 +237,11 @@
               <xsl:call-template name="CapitalizeFirst">
                 <xsl:with-param name="text"><xsl:value-of select="./@stroke-linejoin"/></xsl:with-param>
               </xsl:call-template>
+            </xsl:attribute>
+          </xsl:if>
+          <xsl:if test="./@stroke-dasharray">
+            <xsl:attribute name="StrokeDashArray">
+              <xsl:value-of select="./@stroke-dasharray"/>
             </xsl:attribute>
           </xsl:if>
           <xsl:choose>
@@ -311,44 +308,48 @@
       <xsl:attribute name="Geometry">
         <xsl:value-of select="@d"/>
       </xsl:attribute>
-      <xsl:call-template name="GetNodeBrush" />
       <xsl:call-template name="GetStroke" />
+      <xsl:call-template name="GetNodeBrush" />
     </GeometryDrawing>
   </xsl:template>
 
   <!-- EllipseGeometry: represents the geometry of a circle or ellipse -->
   <xsl:template match="ellipse|circle">
-    <EllipseGeometry>
+    <GeometryDrawing>
       <xsl:call-template name="GetAttributeBrush" />
-      <xsl:attribute name="Center">
-        <xsl:value-of select="@cx"/>,<xsl:value-of select="@cy"/>
-      </xsl:attribute>
-      <xsl:if test="@r">
-        <xsl:attribute name="RadiusX">
-          <xsl:value-of select="@r"/>
-        </xsl:attribute>
-        <xsl:attribute name="RadiusY">
-          <xsl:value-of select="@r"/>
-        </xsl:attribute>
-      </xsl:if>
-      <xsl:if test="@rx">
-        <xsl:attribute name="RadiusX">
-          <xsl:value-of select="@rx"/>
-        </xsl:attribute>
-        <xsl:attribute name="RadiusY">
-          <xsl:value-of select="@ry"/>
-        </xsl:attribute>
-      </xsl:if>
-      <xsl:call-template name="GetNodeBrush" />
+      <GeometryDrawing.Geometry>
+        <EllipseGeometry>
+          <xsl:attribute name="Center">
+            <xsl:value-of select="@cx"/>,<xsl:value-of select="@cy"/>
+          </xsl:attribute>
+          <xsl:if test="@r">
+            <xsl:attribute name="RadiusX">
+              <xsl:value-of select="@r"/>
+            </xsl:attribute>
+            <xsl:attribute name="RadiusY">
+              <xsl:value-of select="@r"/>
+            </xsl:attribute>
+          </xsl:if>
+          <xsl:if test="@rx">
+            <xsl:attribute name="RadiusX">
+              <xsl:value-of select="@rx"/>
+            </xsl:attribute>
+            <xsl:attribute name="RadiusY">
+              <xsl:value-of select="@ry"/>
+            </xsl:attribute>
+          </xsl:if>
+          <xsl:if test="starts-with(@transform, 'rotate(')">
+            <EllipseGeometry.Transform>
+              <xsl:call-template name="RotateIt">
+                <xsl:with-param name="param"><xsl:value-of select="@transform"/></xsl:with-param>
+              </xsl:call-template>
+            </EllipseGeometry.Transform>
+          </xsl:if>
+        </EllipseGeometry>
+      </GeometryDrawing.Geometry>
       <xsl:call-template name="GetStroke" />
-      <xsl:if test="starts-with( @transform, 'rotate(' )">
-        <EllipseGeometry.Transform>
-          <xsl:call-template name="RotateIt">
-            <xsl:with-param name="param"><xsl:value-of select="@transform"/></xsl:with-param>
-          </xsl:call-template>
-        </EllipseGeometry.Transform>
-      </xsl:if>
-    </EllipseGeometry>
+      <xsl:call-template name="GetNodeBrush" />
+    </GeometryDrawing>
   </xsl:template>
 
   <!-- RectangleGeometry: describes a two-dimensional rectangle -->
@@ -365,29 +366,76 @@
         <xsl:otherwise>0</xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <RectangleGeometry>
+    <GeometryDrawing>
       <xsl:call-template name="GetAttributeBrush" />
-      <xsl:attribute name="Rect">
-        <xsl:value-of select="$x"/>,<xsl:value-of select="$y"/>,<xsl:value-of select="@width"/>,<xsl:value-of select="@height"/>
-      </xsl:attribute>
-      <xsl:if test="@rx">
-        <xsl:attribute name="RadiusX">
-          <xsl:value-of select="@rx"/>
-        </xsl:attribute>
-        <xsl:attribute name="RadiusY">
-          <xsl:value-of select="@rx"/>
-        </xsl:attribute>
-      </xsl:if>
-      <xsl:call-template name="GetNodeBrush" />
+      <GeometryDrawing.Geometry>
+        <RectangleGeometry>
+          <xsl:attribute name="Rect">
+            <xsl:value-of select="$x"/>,<xsl:value-of select="$y"/>,<xsl:value-of select="@width"/>,<xsl:value-of select="@height"/>
+          </xsl:attribute>
+          <xsl:if test="@rx">
+            <xsl:attribute name="RadiusX">
+              <xsl:value-of select="@rx"/>
+            </xsl:attribute>
+            <xsl:attribute name="RadiusY">
+              <xsl:value-of select="@rx"/>
+            </xsl:attribute>
+          </xsl:if>
+          <xsl:if test="starts-with( @transform, 'rotate(' )">
+            <RectangleGeometry.Transform>
+              <xsl:call-template name="RotateIt">
+                <xsl:with-param name="param"><xsl:value-of select="@transform"/></xsl:with-param>
+              </xsl:call-template>
+            </RectangleGeometry.Transform>
+          </xsl:if>
+        </RectangleGeometry>
+      </GeometryDrawing.Geometry>
       <xsl:call-template name="GetStroke" />
-      <xsl:if test="starts-with( @transform, 'rotate(' )">
-        <RectangleGeometry.Transform>
-          <xsl:call-template name="RotateIt">
-            <xsl:with-param name="param"><xsl:value-of select="@transform"/></xsl:with-param>
-          </xsl:call-template>
-        </RectangleGeometry.Transform>
-      </xsl:if>
-    </RectangleGeometry>
+      <xsl:call-template name="GetNodeBrush" />
+    </GeometryDrawing>
+  </xsl:template>
+
+  <!-- LineGeometry: represents the geometry of a line -->
+  <xsl:template match="line">
+    <xsl:variable name="x1">
+      <xsl:choose>
+        <xsl:when test="@x1"><xsl:value-of select="@x1"/></xsl:when>
+        <xsl:otherwise>0</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="y1">
+      <xsl:choose>
+        <xsl:when test="@y1"><xsl:value-of select="@y1"/></xsl:when>
+        <xsl:otherwise>0</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="x2">
+      <xsl:choose>
+        <xsl:when test="@x2"><xsl:value-of select="@x2"/></xsl:when>
+        <xsl:otherwise>0</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="y2">
+      <xsl:choose>
+        <xsl:when test="@y2"><xsl:value-of select="@y2"/></xsl:when>
+        <xsl:otherwise>0</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <GeometryDrawing>
+      <xsl:call-template name="GetAttributeBrush" />
+      <GeometryDrawing.Geometry>
+        <LineGeometry>
+          <xsl:attribute name="StartPoint">
+            <xsl:value-of select="$x1"/>,<xsl:value-of select="$y1"/>
+          </xsl:attribute>
+          <xsl:attribute name="EndPoint">
+            <xsl:value-of select="$x2"/>,<xsl:value-of select="$y2"/>
+          </xsl:attribute>
+        </LineGeometry>
+      </GeometryDrawing.Geometry>
+      <xsl:call-template name="GetStroke" />
+      <xsl:call-template name="GetNodeBrush" />
+    </GeometryDrawing>
   </xsl:template>
 
 </xsl:stylesheet>

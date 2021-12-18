@@ -202,7 +202,7 @@
     </xsl:if>
   </xsl:template>
 
-  <!-- Stroke width -->
+  <!-- Stroke properties -->
   <xsl:template name="GetStrokeProperties">
     <xsl:if test="./@stroke-width">
       <xsl:attribute name="StrokeThickness">
@@ -226,6 +226,11 @@
         <xsl:call-template name="CapitalizeFirst">
           <xsl:with-param name="text"><xsl:value-of select="./@stroke-linejoin"/></xsl:with-param>
         </xsl:call-template>
+      </xsl:attribute>
+    </xsl:if>
+    <xsl:if test="./@stroke-dasharray">
+      <xsl:attribute name="StrokeDashArray">
+        <xsl:value-of select="./@stroke-dasharray"/>
       </xsl:attribute>
     </xsl:if>
   </xsl:template>
@@ -385,6 +390,51 @@
             </RectangleGeometry.Transform>
           </xsl:if>
         </RectangleGeometry>
+      </Path.Data>
+    </Path>
+  </xsl:template>
+
+  <!-- LineGeometry: represents the geometry of a line -->
+  <xsl:template match="line">
+    <xsl:variable name="x1">
+      <xsl:choose>
+        <xsl:when test="@x1"><xsl:value-of select="@x1"/></xsl:when>
+        <xsl:otherwise>0</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="y1">
+      <xsl:choose>
+        <xsl:when test="@y1"><xsl:value-of select="@y1"/></xsl:when>
+        <xsl:otherwise>0</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="x2">
+      <xsl:choose>
+        <xsl:when test="@x2"><xsl:value-of select="@x2"/></xsl:when>
+        <xsl:otherwise>0</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="y2">
+      <xsl:choose>
+        <xsl:when test="@y2"><xsl:value-of select="@y2"/></xsl:when>
+        <xsl:otherwise>0</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <Path>
+      <xsl:call-template name="GetStrokeProperties" />
+      <xsl:call-template name="GetStroke" />
+      <xsl:call-template name="GetFill" />
+      <xsl:call-template name="GetGradientFill" />
+      <xsl:call-template name="GetGradientStroke" />
+      <Path.Data>
+        <LineGeometry>
+          <xsl:attribute name="StartPoint">
+            <xsl:value-of select="$x1"/>,<xsl:value-of select="$y1"/>
+          </xsl:attribute>
+          <xsl:attribute name="EndPoint">
+            <xsl:value-of select="$x2"/>,<xsl:value-of select="$y2"/>
+          </xsl:attribute>
+        </LineGeometry>
       </Path.Data>
     </Path>
   </xsl:template>

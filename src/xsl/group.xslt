@@ -112,4 +112,40 @@
     </RectangleGeometry>
   </xsl:template>
 
+  <!-- LineGeometry: represents the geometry of a line -->
+  <xsl:template match="line">
+    <xsl:variable name="x1">
+      <xsl:choose>
+        <xsl:when test="@x1"><xsl:value-of select="@x1"/></xsl:when>
+        <xsl:otherwise>0</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="y1">
+      <xsl:choose>
+        <xsl:when test="@y1"><xsl:value-of select="@y1"/></xsl:when>
+        <xsl:otherwise>0</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="x2">
+      <xsl:choose>
+        <xsl:when test="@x2"><xsl:value-of select="@x2"/></xsl:when>
+        <xsl:otherwise>0</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="y2">
+      <xsl:choose>
+        <xsl:when test="@y2"><xsl:value-of select="@y2"/></xsl:when>
+        <xsl:otherwise>0</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <LineGeometry>
+      <xsl:attribute name="StartPoint">
+        <xsl:value-of select="$x1"/>,<xsl:value-of select="$y1"/>
+      </xsl:attribute>
+      <xsl:attribute name="EndPoint">
+        <xsl:value-of select="$x2"/>,<xsl:value-of select="$y2"/>
+      </xsl:attribute>
+    </LineGeometry>
+  </xsl:template>
+
 </xsl:stylesheet>
